@@ -253,6 +253,27 @@ raw counts, checkpoint verification, and limitations. The recorded preview and
 small JSON report are versioned; generated datasets and model weights remain
 excluded from Git.
 
+## Diagnose the remaining errors
+
+```bash
+uv run --locked python analyze_spatial_errors.py
+open results/spatial_cnn/error_analysis/worst_cases.png
+```
+
+The frozen checkpoint reproduces the original validation counts on CPU.
+Its 1,639 wrong pixels consist of 1,091 unwanted square edits, 421 unwanted
+background edits, and 127 missed circle pixels. The closest 35 images contain
+823 of those errors: 7% of the images account for about half the wrong pixels.
+
+These are exploratory validation associations, not causal claims or test
+results. The script groups errors by foreground separation, circle radius,
+and distance to the image edge, and saves a record for every validation image.
+The displayed examples are explicitly the four worst by wrong-pixel count.
+
+See [the error analysis](docs/spatial_error_analysis.md) and
+[recorded report](docs/experiments/shape_cnn_v1_errors.json). No model weights or
+thresholds were changed during this analysis.
+
 ## Scope and next step
 
 This is synthetic learning data, not evidence of real-photo editing capability.
@@ -262,9 +283,10 @@ the original color-only task can be solved by a simple color-replacement rule,
 which remains a baseline when interpreting neural-network results. Learning a
 single fixed transformation does not demonstrate language understanding.
 
-Next we will inspect the convolutional model's remaining mistakes before changing
-its architecture or training schedule. Larger generative models are later
-experiments, not a requirement for finishing the first milestones.
+Next we will compare a small set of prediction-confidence thresholds while
+holding model weights and data fixed, measuring both unwanted and missed edits.
+Larger generative models are later experiments, not a requirement for finishing
+the first milestones.
 
 The original `draw_circle.py`, `blue_circle.png`, and `red_circle.png` are kept
 as the first hand-created examples.

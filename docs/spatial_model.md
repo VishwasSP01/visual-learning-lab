@@ -83,8 +83,9 @@ The weights, report, and preview are generated under `results/spatial_cnn/`.
 Rerunning overwrites those generated artifacts. The documented run report and
 preview above are retained separately in Git. GPU numerics can vary between runs.
 
-Our next step is to inspect the remaining mistakes before changing the model
-or training schedule. The test set stays reserved for a later frozen experiment.
+The subsequent [error analysis](spatial_error_analysis.md) inspects the remaining
+mistakes without changing the model or training schedule. The test set stays
+reserved for a later frozen experiment.
 
 References: [PyTorch convolution](https://docs.pytorch.org/docs/2.14/generated/torch.nn.Conv2d.html)
 and [binary cross-entropy with logits](https://docs.pytorch.org/docs/2.14/generated/torch.nn.BCEWithLogitsLoss.html).

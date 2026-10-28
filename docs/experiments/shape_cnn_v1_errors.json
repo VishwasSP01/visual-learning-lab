@@ -1,0 +1,113 @@
+{
+  "analysis_script_sha256": "b1005aca2022e76fa4319df7e4cd37516fa3f3dd1e86fb9152e59724061cf339",
+  "boundary_definition": "Dilation minus erosion with a 5x5 square neighborhood, for either shape.",
+  "by_circle_edge_margin": {
+    "0-5": {
+      "error_pixels": 415,
+      "exact_image_success": 0.26717557251908397,
+      "failed_images": 96,
+      "images": 131,
+      "mean_error_pixels": 3.16793893129771
+    },
+    "11+": {
+      "error_pixels": 396,
+      "exact_image_success": 0.55,
+      "failed_images": 36,
+      "images": 80,
+      "mean_error_pixels": 4.95
+    },
+    "6-10": {
+      "error_pixels": 828,
+      "exact_image_success": 0.4532871972318339,
+      "failed_images": 158,
+      "images": 289,
+      "mean_error_pixels": 2.865051903114187
+    }
+  },
+  "by_circle_radius": {
+    "5": {
+      "error_pixels": 363,
+      "exact_image_success": 0.3253012048192771,
+      "failed_images": 56,
+      "images": 83,
+      "mean_error_pixels": 4.373493975903615
+    },
+    "6": {
+      "error_pixels": 110,
+      "exact_image_success": 0.8024691358024691,
+      "failed_images": 16,
+      "images": 81,
+      "mean_error_pixels": 1.3580246913580247
+    },
+    "7": {
+      "error_pixels": 260,
+      "exact_image_success": 0.4117647058823529,
+      "failed_images": 70,
+      "images": 119,
+      "mean_error_pixels": 2.1848739495798317
+    },
+    "8": {
+      "error_pixels": 419,
+      "exact_image_success": 0.2956521739130435,
+      "failed_images": 81,
+      "images": 115,
+      "mean_error_pixels": 3.643478260869565
+    },
+    "9": {
+      "error_pixels": 487,
+      "exact_image_success": 0.3431372549019608,
+      "failed_images": 67,
+      "images": 102,
+      "mean_error_pixels": 4.7745098039215685
+    }
+  },
+  "by_shape_gap": {
+    "0-1": {
+      "error_pixels": 823,
+      "exact_image_success": 0.02857142857142857,
+      "failed_images": 34,
+      "images": 35,
+      "mean_error_pixels": 23.514285714285716
+    },
+    "2-5": {
+      "error_pixels": 432,
+      "exact_image_success": 0.10606060606060606,
+      "failed_images": 59,
+      "images": 66,
+      "mean_error_pixels": 6.545454545454546
+    },
+    "6+": {
+      "error_pixels": 384,
+      "exact_image_success": 0.506265664160401,
+      "failed_images": 197,
+      "images": 399,
+      "mean_error_pixels": 0.9624060150375939
+    }
+  },
+  "checkpoint_sha256": "ec5248735953e8670020e821c1a24d2f37d73365090183aa22813ed14fe841c2",
+  "error_totals": {
+    "damaged_background_pixels": 421,
+    "damaged_square_pixels": 1091,
+    "error_pixels": 1639,
+    "errors_farther_from_shape_boundaries": 389,
+    "errors_within_two_pixels_of_a_shape_boundary": 1250,
+    "missed_circle_pixels": 127
+  },
+  "exact_images": 210,
+  "experiment": "shape_cnn_v1_error_analysis",
+  "failed_images": 290,
+  "gap_definition": "Minimum foreground Chebyshev distance minus one; adjacent pixels have gap 0.",
+  "images": 500,
+  "manifest_sha256": "4b5610a59ba04d7ab3894d5165d5341ac9acee0a61df4a4c746695fb80a338cb",
+  "reference_report_sha256": "2ab8fa0ebcf562cc475955ebc57ddb59f03b0573371398dd828336d5bd8ceba9",
+  "scope": "Exploratory associations on checkpoint-selection validation data; no causal or test-set claims.",
+  "split": "validation",
+  "test_dataset_used": false,
+  "training_performed": false,
+  "worst_example_ids": [
+    "validation-0115",
+    "validation-0250",
+    "validation-0295",
+    "validation-0391"
+  ]
+}
