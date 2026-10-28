@@ -84,6 +84,9 @@ These are selection results on validation data already used for checkpoint
 selection. They do not establish unbiased final performance, universal score
 calibration, or optimality over every possible threshold.
 
-No test images have been opened. The next step is to evaluate this frozen
-checkpoint and threshold once on the reserved 1,000-image test split, without
-choosing a different threshold from test results.
+At threshold-selection time, no model-performance measurement had been made on
+the test split. Dataset-integrity checks and generation previews had inspected
+test files, without using their model results for selection. The subsequent
+[frozen test evaluation](test_evaluation.md) records the selected checkpoint
+and threshold on the 1,000-image test split, without choosing another threshold
+from those results.

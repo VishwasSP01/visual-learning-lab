@@ -300,6 +300,33 @@ See [the threshold experiment](docs/confidence_thresholds.md),
 [recorded report](docs/experiments/shape_cnn_v1_thresholds.json), and
 [selected configuration](docs/experiments/shape_cnn_v1_selected_config.json).
 
+## Evaluate the frozen model on test data
+
+```bash
+uv run --locked python evaluate_frozen_model.py
+open results/spatial_cnn/frozen_test/preview.png
+```
+
+The selected checkpoint and threshold 0.80 were committed before this evaluation.
+The evaluator verifies their hashes against the recorded configuration before
+loading the 1,000 test examples. It performs no training or threshold selection.
+
+| Frozen CNN measurement | Validation (500 images) | Test (1,000 images) |
+| --- | ---: | ---: |
+| Exact images | 67.6% | **71.1%** |
+| Circle pixels edited correctly | 99.540% | 99.685% |
+| Square pixels preserved | 99.585% | 99.691% |
+
+The frozen CNN produces 711 completely correct test images; 289 contain at least
+one error. The fixed color rule produces zero completely correct test images
+because it also recolors every blue square. Dataset-integrity checks and previews
+had inspected test files earlier, but model/threshold selection did not use test
+performance. These scores describe this synthetic task, not real photographs.
+
+See [the frozen test evaluation](docs/test_evaluation.md) and
+[recorded report](docs/experiments/shape_cnn_v1_test.json) for the protocol,
+counts, example outputs, and limitations.
+
 ## Scope and next step
 
 This is synthetic learning data, not evidence of real-photo editing capability.
@@ -309,10 +336,10 @@ the original color-only task can be solved by a simple color-replacement rule,
 which remains a baseline when interpreting neural-network results. Learning a
 single fixed transformation does not demonstrate language understanding.
 
-Next we will evaluate the frozen model and selected threshold on the reserved
-1,000-image test set without tuning against those test results. Larger
-generative models are later experiments, not a requirement for finishing the
-first milestones.
+The first experiment is now recorded through frozen test evaluation. Next we
+can introduce instruction conditioning: choosing which shape to edit from a
+request, with a newly reserved holdout. Larger generative models are later
+experiments, not a requirement for finishing the first milestones.
 
 The original `draw_circle.py`, `blue_circle.png`, and `red_circle.png` are kept
 as the first hand-created examples.
