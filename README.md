@@ -274,6 +274,32 @@ See [the error analysis](docs/spatial_error_analysis.md) and
 [recorded report](docs/experiments/shape_cnn_v1_errors.json). No model weights or
 thresholds were changed during this analysis.
 
+## Compare confidence thresholds
+
+```bash
+uv run --locked python compare_thresholds.py
+open results/spatial_cnn/threshold_sweep/preview.png
+```
+
+With weights held fixed, we compared the predeclared thresholds 0.50, 0.70,
+0.80, 0.90, and 0.95 on the same 500 validation images. Selection prioritizes
+exact images, then fewer wrong pixels, then the lower threshold.
+
+The selected **0.80** threshold increases exact validation images from
+**210 / 500 (42%) to 338 / 500 (67.6%)**. Wrong pixels decrease from 1,639 to
+1,101. Square preservation improves from 99.095% to 99.585%, while circle-edit
+accuracy decreases from 99.864% to 99.540%. A higher threshold is not always
+better: 0.95 misses substantially more circle pixels.
+
+The comparison records unchanged checkpoint hashes, reproduces the original
+0.50 counts, and saves a selected configuration for later test evaluation.
+These are validation-selection results, not final test scores. The sigmoid
+scores have not been established as calibrated correctness probabilities.
+
+See [the threshold experiment](docs/confidence_thresholds.md),
+[recorded report](docs/experiments/shape_cnn_v1_thresholds.json), and
+[selected configuration](docs/experiments/shape_cnn_v1_selected_config.json).
+
 ## Scope and next step
 
 This is synthetic learning data, not evidence of real-photo editing capability.
@@ -283,10 +309,10 @@ the original color-only task can be solved by a simple color-replacement rule,
 which remains a baseline when interpreting neural-network results. Learning a
 single fixed transformation does not demonstrate language understanding.
 
-Next we will compare a small set of prediction-confidence thresholds while
-holding model weights and data fixed, measuring both unwanted and missed edits.
-Larger generative models are later experiments, not a requirement for finishing
-the first milestones.
+Next we will evaluate the frozen model and selected threshold on the reserved
+1,000-image test set without tuning against those test results. Larger
+generative models are later experiments, not a requirement for finishing the
+first milestones.
 
 The original `draw_circle.py`, `blue_circle.png`, and `red_circle.png` are kept
 as the first hand-created examples.

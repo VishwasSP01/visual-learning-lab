@@ -71,12 +71,12 @@ reproduce its reference validation counts. Generated outputs live under
 `results/spatial_cnn/error_analysis/`; the small recorded report and preview
 above are versioned separately.
 
-## The next controlled experiment
+## The subsequent controlled experiment
 
-The current decision is to edit whenever predicted probability is at least
-0.5. Since unwanted edits dominate these observed errors, the next experiment
-will compare a small, declared set of higher confidence thresholds while
-holding model weights and data fixed. We will measure both unwanted edits
-and missed circle pixels; requiring more confidence can reduce one error while
-increasing the other. Threshold selection belongs on validation data, with
-the test split reserved for a later frozen configuration.
+The original decision was to edit whenever the sigmoid score was at least
+0.5. Since unwanted edits dominated these observed errors, the subsequent
+[threshold experiment](confidence_thresholds.md) compared a small, declared set
+of higher thresholds while holding model weights and data fixed. It measured
+both unwanted edits and missed circle pixels; requiring a larger score can
+reduce one error while increasing the other. Threshold selection belongs on
+validation data, with the test split reserved for a later frozen configuration.

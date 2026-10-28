@@ -1,0 +1,12 @@
+{
+  "checkpoint_sha256": "ec5248735953e8670020e821c1a24d2f37d73365090183aa22813ed14fe841c2",
+  "dataset": "shape_edits_v1",
+  "experiment": "shape_cnn_v1_threshold_sweep",
+  "manifest_sha256": "4b5610a59ba04d7ab3894d5165d5341ac9acee0a61df4a4c746695fb80a338cb",
+  "mask_probability_threshold": 0.8,
+  "model": "ShapeEditor",
+  "renderer": "Set pixels selected by predicted mask to RGB (255,0,0); preserve all others. No ground-truth mask at inference.",
+  "selected_on": "validation",
+  "selection_rule": "Most exact validation images; then fewest wrong pixels; then lowest threshold.",
+  "test_dataset_used": false
+}

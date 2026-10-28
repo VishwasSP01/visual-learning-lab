@@ -1,0 +1,185 @@
+{
+  "candidates": [
+    {
+      "scores": {
+        "background_preservation": 0.9992265066749609,
+        "counts": {
+          "background_pixels": 1954768,
+          "correct_edited_pixels": 93105,
+          "correct_pixels": 2046361,
+          "edited_pixels": 93232,
+          "exact_images": 210,
+          "exact_squares": 371,
+          "images": 500,
+          "mask_intersection": 93105,
+          "mask_union": 94744,
+          "pixels": 2048000,
+          "square_pixels": 120564,
+          "unchanged_background_pixels": 1953256,
+          "unchanged_square_pixels": 119473,
+          "unchanged_white_background_pixels": 1833783,
+          "white_background_pixels": 1834204
+        },
+        "edit_mask_iou": 0.9827007514987757,
+        "edit_pixel_accuracy": 0.998637806761627,
+        "exact_image_success": 0.42,
+        "exact_square_preservation": 0.742,
+        "square_preservation": 0.9909508642712584,
+        "white_background_preservation": 0.9997704726409931,
+        "whole_image_pixel_accuracy": 0.99919970703125
+      },
+      "threshold": 0.5
+    },
+    {
+      "scores": {
+        "background_preservation": 0.999526798065039,
+        "counts": {
+          "background_pixels": 1954768,
+          "correct_edited_pixels": 92966,
+          "correct_pixels": 2046809,
+          "edited_pixels": 93232,
+          "exact_images": 303,
+          "exact_squares": 427,
+          "images": 500,
+          "mask_intersection": 92966,
+          "mask_union": 94157,
+          "pixels": 2048000,
+          "square_pixels": 120564,
+          "unchanged_background_pixels": 1953843,
+          "unchanged_square_pixels": 119890,
+          "unchanged_white_background_pixels": 1833953,
+          "white_background_pixels": 1834204
+        },
+        "edit_mask_iou": 0.9873509138991259,
+        "edit_pixel_accuracy": 0.9971469023511241,
+        "exact_image_success": 0.606,
+        "exact_square_preservation": 0.854,
+        "square_preservation": 0.9944096081749112,
+        "white_background_preservation": 0.9998631558975992,
+        "whole_image_pixel_accuracy": 0.99941845703125
+      },
+      "threshold": 0.7
+    },
+    {
+      "scores": {
+        "background_preservation": 0.9996562251888715,
+        "counts": {
+          "background_pixels": 1954768,
+          "correct_edited_pixels": 92803,
+          "correct_pixels": 2046899,
+          "edited_pixels": 93232,
+          "exact_images": 338,
+          "exact_squares": 440,
+          "images": 500,
+          "mask_intersection": 92803,
+          "mask_union": 93904,
+          "pixels": 2048000,
+          "square_pixels": 120564,
+          "unchanged_background_pixels": 1954096,
+          "unchanged_square_pixels": 120064,
+          "unchanged_white_background_pixels": 1834032,
+          "white_background_pixels": 1834204
+        },
+        "edit_mask_iou": 0.9882752598398364,
+        "edit_pixel_accuracy": 0.9953985755963618,
+        "exact_image_success": 0.676,
+        "exact_square_preservation": 0.88,
+        "square_preservation": 0.9958528250555722,
+        "white_background_preservation": 0.9999062263521397,
+        "whole_image_pixel_accuracy": 0.99946240234375
+      },
+      "threshold": 0.8
+    },
+    {
+      "scores": {
+        "background_preservation": 0.9997851407430447,
+        "counts": {
+          "background_pixels": 1954768,
+          "correct_edited_pixels": 92282,
+          "correct_pixels": 2046630,
+          "edited_pixels": 93232,
+          "exact_images": 315,
+          "exact_squares": 452,
+          "images": 500,
+          "mask_intersection": 92282,
+          "mask_union": 93652,
+          "pixels": 2048000,
+          "square_pixels": 120564,
+          "unchanged_background_pixels": 1954348,
+          "unchanged_square_pixels": 120237,
+          "unchanged_white_background_pixels": 1834111,
+          "white_background_pixels": 1834204
+        },
+        "edit_mask_iou": 0.9853713748772049,
+        "edit_pixel_accuracy": 0.9898103655397289,
+        "exact_image_success": 0.63,
+        "exact_square_preservation": 0.904,
+        "square_preservation": 0.9972877475863442,
+        "white_background_preservation": 0.9999492968066802,
+        "whole_image_pixel_accuracy": 0.9993310546875
+      },
+      "threshold": 0.9
+    },
+    {
+      "scores": {
+        "background_preservation": 0.9998680150278703,
+        "counts": {
+          "background_pixels": 1954768,
+          "correct_edited_pixels": 91453,
+          "correct_pixels": 2045963,
+          "edited_pixels": 93232,
+          "exact_images": 252,
+          "exact_squares": 465,
+          "images": 500,
+          "mask_intersection": 91453,
+          "mask_union": 93490,
+          "pixels": 2048000,
+          "square_pixels": 120564,
+          "unchanged_background_pixels": 1954510,
+          "unchanged_square_pixels": 120351,
+          "unchanged_white_background_pixels": 1834159,
+          "white_background_pixels": 1834204
+        },
+        "edit_mask_iou": 0.9782115734303134,
+        "edit_pixel_accuracy": 0.980918568731766,
+        "exact_image_success": 0.504,
+        "exact_square_preservation": 0.93,
+        "square_preservation": 0.9982333034736738,
+        "white_background_preservation": 0.9999754661967807,
+        "whole_image_pixel_accuracy": 0.99900537109375
+      },
+      "threshold": 0.95
+    }
+  ],
+  "checkpoint_sha256": "ec5248735953e8670020e821c1a24d2f37d73365090183aa22813ed14fe841c2",
+  "comparison_script_sha256": "2b2a486b48882a7a4e1a4f54d3e01d7eb1c1e1dc5f2ee9bb9a0912a3ed7c0a33",
+  "dataset": "shape_edits_v1",
+  "device": "cpu",
+  "evaluated_files_sha256": "58527cd00655e0ee6dd24149d56ac45b905ca7d8359815768e9233ad1322ac96",
+  "experiment": "shape_cnn_v1_threshold_sweep",
+  "images": 500,
+  "manifest_sha256": "4b5610a59ba04d7ab3894d5165d5341ac9acee0a61df4a4c746695fb80a338cb",
+  "paired_changes_vs_0_50": {
+    "became_exact": 135,
+    "images_with_equal_wrong_pixels": 251,
+    "images_with_fewer_wrong_pixels": 212,
+    "images_with_more_wrong_pixels": 37,
+    "lost_exactness": 7
+  },
+  "reference_report_sha256": "2ab8fa0ebcf562cc475955ebc57ddb59f03b0573371398dd828336d5bd8ceba9",
+  "scope": "Validation-selected operating point on one synthetic dataset and frozen checkpoint; test performance is not yet established.",
+  "score_interpretation": "Sigmoid scores are not demonstrated to be calibrated probabilities of correctness.",
+  "selected_threshold": 0.8,
+  "selection_rule": "Most exact validation images; then fewest wrong pixels; then lowest threshold.",
+  "split": "validation",
+  "test_dataset_used": false,
+  "threshold_grid": [
+    0.5,
+    0.7,
+    0.8,
+    0.9,
+    0.95
+  ],
+  "torch_version": "2.15.0",
+  "training_performed": false
+}
