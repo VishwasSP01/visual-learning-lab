@@ -66,5 +66,5 @@ Rebuild the dataset:
 uv run --locked python generate_spatial_pairs.py
 ```
 
-Regeneration overwrites this dataset's generated files. No model has been
-trained on this new task at this milestone.
+Regeneration overwrites this dataset's generated files. The subsequent
+[CNN experiment](spatial_model.md) uses this dataset to learn the edit region.

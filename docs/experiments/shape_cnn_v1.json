@@ -1,0 +1,150 @@
+{
+  "architecture": "Conv2d 3->16,16->16,16->16,16->16 (3x3; dilations 1,2,4,8; ReLU), 16->1 (1x1)",
+  "batch_size": 64,
+  "dataset": "shape_edits_v1",
+  "device": "mps",
+  "elapsed_seconds": 13.75167112499912,
+  "epochs": 12,
+  "experiment": "shape_cnn_v1",
+  "history": [
+    {
+      "epoch": 1,
+      "train_weighted_bce_during_epoch": 0.6795798985004425,
+      "validation_weighted_bce": 0.30054200053215024
+    },
+    {
+      "epoch": 2,
+      "train_weighted_bce_during_epoch": 0.24601142103672027,
+      "validation_weighted_bce": 0.2823220391273499
+    },
+    {
+      "epoch": 3,
+      "train_weighted_bce_during_epoch": 0.21765378737449645,
+      "validation_weighted_bce": 0.2584194424152374
+    },
+    {
+      "epoch": 4,
+      "train_weighted_bce_during_epoch": 0.19546272270679474,
+      "validation_weighted_bce": 0.23257977116107942
+    },
+    {
+      "epoch": 5,
+      "train_weighted_bce_during_epoch": 0.16805981326103211,
+      "validation_weighted_bce": 0.19816538119316102
+    },
+    {
+      "epoch": 6,
+      "train_weighted_bce_during_epoch": 0.13628420531749724,
+      "validation_weighted_bce": 0.16263625943660737
+    },
+    {
+      "epoch": 7,
+      "train_weighted_bce_during_epoch": 0.10186488844156265,
+      "validation_weighted_bce": 0.13224692571163177
+    },
+    {
+      "epoch": 8,
+      "train_weighted_bce_during_epoch": 0.07088433078527451,
+      "validation_weighted_bce": 0.06966762578487397
+    },
+    {
+      "epoch": 9,
+      "train_weighted_bce_during_epoch": 0.042661618679761884,
+      "validation_weighted_bce": 0.03797967165708542
+    },
+    {
+      "epoch": 10,
+      "train_weighted_bce_during_epoch": 0.02535757396966219,
+      "validation_weighted_bce": 0.020037012055516244
+    },
+    {
+      "epoch": 11,
+      "train_weighted_bce_during_epoch": 0.013944000381231308,
+      "validation_weighted_bce": 0.011132422290742397
+    },
+    {
+      "epoch": 12,
+      "train_weighted_bce_during_epoch": 0.008695432206615806,
+      "validation_weighted_bce": 0.008849041819572448
+    }
+  ],
+  "initial_validation_loss": 1.3480330476760864,
+  "learning_rate": 0.001,
+  "loss": "BCEWithLogitsLoss; positive weight = negative/positive training pixels",
+  "manifest_sha256": "4b5610a59ba04d7ab3894d5165d5341ac9acee0a61df4a4c746695fb80a338cb",
+  "mask_probability_threshold": 0.5,
+  "methods": {
+    "color_rule": {
+      "background_preservation": 0.9383231155820025,
+      "counts": {
+        "background_pixels": 1954768,
+        "correct_edited_pixels": 93232,
+        "correct_pixels": 1927436,
+        "edited_pixels": 93232,
+        "exact_images": 0,
+        "exact_squares": 0,
+        "images": 500,
+        "mask_intersection": 93232,
+        "mask_union": 213796,
+        "pixels": 2048000,
+        "square_pixels": 120564,
+        "unchanged_background_pixels": 1834204,
+        "unchanged_square_pixels": 0,
+        "unchanged_white_background_pixels": 1834204,
+        "white_background_pixels": 1834204
+      },
+      "edit_mask_iou": 0.43607925311979645,
+      "edit_pixel_accuracy": 1.0,
+      "exact_image_success": 0.0,
+      "exact_square_preservation": 0.0,
+      "square_preservation": 0.0,
+      "white_background_preservation": 1.0,
+      "whole_image_pixel_accuracy": 0.941130859375
+    },
+    "spatial_cnn": {
+      "background_preservation": 0.9992265066749609,
+      "counts": {
+        "background_pixels": 1954768,
+        "correct_edited_pixels": 93105,
+        "correct_pixels": 2046361,
+        "edited_pixels": 93232,
+        "exact_images": 210,
+        "exact_squares": 371,
+        "images": 500,
+        "mask_intersection": 93105,
+        "mask_union": 94744,
+        "pixels": 2048000,
+        "square_pixels": 120564,
+        "unchanged_background_pixels": 1953256,
+        "unchanged_square_pixels": 119473,
+        "unchanged_white_background_pixels": 1833783,
+        "white_background_pixels": 1834204
+      },
+      "edit_mask_iou": 0.9827007514987757,
+      "edit_pixel_accuracy": 0.998637806761627,
+      "exact_image_success": 0.42,
+      "exact_square_preservation": 0.742,
+      "square_preservation": 0.9909508642712584,
+      "white_background_preservation": 0.9997704726409931,
+      "whole_image_pixel_accuracy": 0.99919970703125
+    }
+  },
+  "optimizer": "Adam",
+  "parameters": 7425,
+  "positive_weight": 21.681663735475098,
+  "receptive_field": 31,
+  "renderer": "Set pixels selected by predicted mask to RGB (255,0,0); preserve all others. No ground-truth mask at inference.",
+  "reproducibility": "Fixed seed and dependency lock; GPU numerics may vary.",
+  "scope": "Fixed-task supervised localization on synthetic circles and squares; color rendering is deterministic, not learned.",
+  "seed": 42,
+  "selected_epoch": 12,
+  "selected_validation_loss": 0.008849041819572448,
+  "selection": "Lowest weighted validation BCE among requested epochs; test set not loaded.",
+  "split": "validation",
+  "torch_version": "2.15.0",
+  "train_examples": 5000,
+  "training_input_mask_sha256": "52c6469e54173271b52febfaf6c5648681a5a62aba9f5aa6b164f56519cf5182",
+  "training_script_sha256": "790f39f937e75a15288e29013a128399b8ed39a98e3e4f9eaf59906b7db75132",
+  "validation_examples": 500,
+  "validation_input_mask_sha256": "9fcd49ee51ae89be534aaa47dfd0e8308d986cf4637867bd8b1ffcc89f5c032a"
+}

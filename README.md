@@ -212,11 +212,46 @@ The manifest adds a `square_mask` so the next experiment can measure preservatio
 of the distractor separately from the large white background. Masks and geometry
 are ground-truth labels; they must not be provided as model inputs.
 The generator checks the actual saved files for correct edits, preservation,
-and non-overlapping masks. No model has been trained on this new task yet.
+and non-overlapping masks. The CNN experiment below learns from this dataset.
 
 See [the spatial dataset explanation](docs/spatial_dataset.md) for the task,
 checks, split protocol, and limitations. The preview shows one example per split:
 input, target, circle edit mask, and square preservation mask.
+
+## First spatial model: learn where to edit
+
+```bash
+uv run --locked python -m unittest discover -v
+uv run --locked python train_spatial_model.py
+open results/spatial_cnn/preview.png
+```
+
+A small **7,425-parameter CNN** receives only the RGB image and predicts an
+edit-region mask. Its convolutional layers have a theoretical 31 x 31 receptive
+field. Ground-truth masks are supervision labels, not input channels. A separate
+fixed renderer paints the predicted region red; the color operation is not learned.
+
+The first run trained for twelve epochs on 5,000 examples and selected epoch 12
+by lowest weighted validation loss. The 1,000 test examples were not loaded.
+
+| Validation measurement | Color rule | CNN plus renderer |
+| --- | ---: | ---: |
+| Circle pixels edited correctly | 100% | 99.86% |
+| Square pixels preserved | 0% | 99.10% |
+| Entire images correct | 0 / 500 | 210 / 500 (42%) |
+| Edit-mask IoU | 43.61% | 98.27% |
+
+The distinction between per-pixel accuracy and exact images matters: a few
+incorrect pixels still make the whole image incorrect. The first four validation
+examples below include visible boundary errors; they were not cherry-picked.
+
+![Input, color rule, CNN edit, target, predicted mask](docs/assets/spatial_cnn_preview.png)
+
+See [the CNN explanation](docs/spatial_model.md) and
+[recorded experiment](docs/experiments/shape_cnn_v1.json) for training settings,
+raw counts, checkpoint verification, and limitations. The recorded preview and
+small JSON report are versioned; generated datasets and model weights remain
+excluded from Git.
 
 ## Scope and next step
 
@@ -227,9 +262,9 @@ the original color-only task can be solved by a simple color-replacement rule,
 which remains a baseline when interpreting neural-network results. Learning a
 single fixed transformation does not demonstrate language understanding.
 
-Next we will investigate a small convolutional model on the shape-dependent
-dataset. Larger generative models are later experiments, not a requirement for
-finishing the first milestones.
+Next we will inspect the convolutional model's remaining mistakes before changing
+its architecture or training schedule. Larger generative models are later
+experiments, not a requirement for finishing the first milestones.
 
 The original `draw_circle.py`, `blue_circle.png`, and `red_circle.png` are kept
 as the first hand-created examples.
