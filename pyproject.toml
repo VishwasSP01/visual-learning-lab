@@ -1,0 +1,10 @@
+[project]
+name = "visual-learning-lab"
+version = "0.1.0"
+description = "Learn deep learning through precise image editing on a laptop."
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "numpy>=2.5.4",
+    "pillow==13.0.0",
+    "torch>=2.15.0",
+]
