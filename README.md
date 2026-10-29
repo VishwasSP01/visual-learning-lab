@@ -1,5 +1,7 @@
 **Instruction-conditioned image editor: 972/1,000 exact requests (97.2%) on a reserved test, vs 542/1,000 for the binary reference.**
 
+![Same validation scene: recolour circle, then recolour square](docs/assets/instruction_demo.gif)
+
 | Frozen test metric | Binary reference | Semantic model |
 | --- | ---: | ---: |
 | Exact requests | 542/1,000 (54.2%) | **972/1,000 (97.2%)** |

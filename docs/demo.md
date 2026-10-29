@@ -35,6 +35,15 @@ The demo serves validation scenes only; its per-example scores are not a new
 benchmark. The selected config's historical false test-performance flag records
 that selection happened before the frozen test.
 
+## README animation
+
+The [README GIF](assets/instruction_demo.gif) shows `validation-scene-0000`
+first with the circle choice, then the square choice. Its frames are captured
+from the running local browser demo, with the input and model-result panels
+cropped and arranged side by side. Each state lasts 2.5 seconds, looping every
+5 seconds. The captured input pixels are identical between choices. This is
+one illustrative validation scene, not an additional benchmark.
+
 ## What the model receives
 
 The network receives only RGB pixels. It predicts background/circle/square
