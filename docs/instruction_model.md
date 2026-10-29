@@ -1,5 +1,9 @@
 # First instruction-conditioned CNN
 
+**Current status:** this historical model is the reference in the
+[subsequent frozen test](instruction_test_evaluation.md). That test is now
+observed; the development-stage reservation statements below are historical.
+
 The model receives an RGB image and one categorical request: ID 0 edits the
 circle; ID 1 edits the square. A learned `Embedding(2, 4)` maps each ID to four
 numbers. Those numbers become constant spatial channels beside RGB, giving the

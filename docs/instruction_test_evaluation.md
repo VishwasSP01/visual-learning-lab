@@ -39,3 +39,48 @@ presented as retaining an unseen test on these same examples.
 
 These are synthetic shapes from one rendering process with held-out circle
 positions. They do not establish real-photo editing or language understanding.
+
+## Recorded frozen result
+
+The evaluator ran from clean revision
+[`fc7640d`](https://github.com/VishwasSP01/visual-learning-lab/commit/fc7640de037628a8c1fb59f05413a4c1fb166808),
+after the plan and evaluator were committed and pushed. Neither checkpoint,
+the plan, nor the manifest changed during the run.
+
+| Frozen test measurement | Previous binary editor, cutoff 0.95 | Joint semantic editor |
+| --- | ---: | ---: |
+| Exact requests / 1,000 | 542 (54.2%) | **972 (97.2%)** |
+| Exact scene pairs / 500 | 178 (35.6%) | **482 (96.4%)** |
+| Exact circle requests / 500 | 360 | **483** |
+| Exact square requests / 500 | 182 | **489** |
+| Requested pixels correct | 99.5941% | **99.9820%** |
+| Opposite-object pixels preserved | 98.8824% | **99.9820%** |
+| White-background pixels preserved | 99.9969% | **99.9993%** |
+| Total wrong pixels | 3,237 | **100** |
+
+Relative to the reference, 430 requests and 304 scene pairs become exact, with
+no lost exact requests or pairs. The semantic model's remaining 100 wrong pixels
+comprise 37 missed intended edits, 37 unwanted edits to the opposite object,
+and 26 unwanted white-background edits. Twenty-eight requests and eighteen
+scene pairs are still imperfect; high pixel rates do not erase those failures.
+
+The selected model's validation result was 491/500 exact requests (98.2%) and
+244/250 exact pairs (97.6%). Frozen test results are 97.2% and 96.4%, respectively.
+This supports generalization to reserved scenes within this synthetic process,
+with the limitations above. No other seed or operating point was tried on test.
+
+An independent NumPy audit read the saved binary prediction masks and test image
+files without invoking a model again. It reproduced every aggregate and
+per-instruction raw count and the exact scene-pair counts for both methods.
+Saved-mask and checkpoint SHA-256 hashes also match the report and frozen plan.
+
+The [full report](experiments/semantic_dilated_v2_test.json) includes provenance,
+counts, evaluated-file hashes, and the embedded pre-test plan. The preview shows
+the first two test scenes under both requests, in manifest order:
+
+![First four frozen test requests: input, previous editor, semantic editor, target](assets/semantic_dilated_v2_test.png)
+
+The instruction test set is now **observed**. Future changes need a new held-out
+evaluation protocol before another claim of unseen performance. The selected
+configuration's historical `test_model_performance_measured: false` records its
+selection state before test; it does not mean this evaluation has not happened.

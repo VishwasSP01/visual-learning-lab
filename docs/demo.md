@@ -1,8 +1,11 @@
-# Local image-editing demo
+# Local categorical image-editing demo
 
-The demo runs the saved spatial CNN on CPU and displays one validation example
-at a time. It uses Python's standard-library HTTP server with the existing
-PyTorch, NumPy, and Pillow dependencies. There is no additional demo dependency.
+The default demo uses the recorded semantic editor on CPU. Pick one validation
+scene, then choose **Edit circle** or **Edit square** while preserving the other
+object and the white background. All 250 validation scenes and both choices are
+available, including failures. The page displays input, prediction, target, and
+scores for the displayed request. It uses the existing dependencies and Python's
+standard-library HTTP server.
 
 ## Launch the recorded model
 
@@ -13,72 +16,100 @@ uv sync --locked
 uv run --locked python scripts/demo.py
 ```
 
-Open [http://127.0.0.1:7860](http://127.0.0.1:7860). The server binds to the local
-loopback address. Press **Ctrl+C** in its terminal to stop it. Use `--port 7861`
-if the default port is already in use.
+Open [the local demo](http://127.0.0.1:7860). The server binds only to loopback.
+Press **Ctrl+C** in its terminal to stop it. Use `--port 7861` if needed.
 
-These local files must exist:
+Required local files:
 
-- `data/shape_edits_v1/manifest.jsonl` and its validation images and masks.
-- `results/spatial_cnn/model.pt`, the original saved checkpoint.
-- `docs/experiments/shape_cnn_v1_selected_config.json`, tracked in Git.
+- `data/instruction_edits_v1/manifest.jsonl` and its validation images and masks.
+- `results/reproductions/semantic_dilated_v2/model.pt`, the saved seed-42 weights.
+- `docs/experiments/semantic_dilated_v2_selected_config.json`, tracked in Git.
 
-The checkpoint and dataset manifest must match the selected configuration's
-SHA-256 hashes. We load the exact checkpoint bytes that pass that check. The
-original configuration uses threshold **0.80**. Missing or changed files produce
-a startup error; the demo does not train a replacement or silently use other
-weights. Generated data and model weights are not distributed in the repository.
+Startup verifies checkpoint and manifest hashes, model architecture, class
+mapping, and decoder. It loads the exact weight bytes that passed verification.
+Missing or changed artifacts fail visibly; the server does not train replacement
+weights. Generated data and model weights are excluded from Git.
 
-## If you are starting from a fresh clone
+The checkpoint is the one used in the [frozen test](instruction_test_evaluation.md).
+The demo serves validation scenes only; its per-example scores are not a new
+benchmark. The selected config's historical false test-performance flag records
+that selection happened before the frozen test.
 
-You can create an independent local model and select its threshold on validation
-data. This is a new reproduction, so its weights and threshold may differ from
-the recorded checkpoint. The following commands assume fresh output directories:
+## What the model receives
+
+The network receives only RGB pixels. It predicts background/circle/square
+classes, using the frozen argmax decoder. Your categorical choice selects the
+predicted object region, and a fixed renderer paints it red. Targets and masks
+are opened after prediction, supplying the comparison panel and scores only.
+This does not interpret free-form language or accept arbitrary photo uploads.
+
+Scores adapt to the request:
+
+- **Whole-image result:** every pixel must match for an exact result.
+- **Selected object edited correctly:** requested-region pixels matching target.
+- **Other object preserved:** opposite-object pixels unchanged from input.
+- **Incorrect pixels:** all mismatches, including white-background damage.
+
+Changing the instruction keeps the same input scene. Previous/Next and the scene
+selector preserve the selected instruction. The desktop layout has three image
+columns; narrow panels stack them. The server writes no data, models, reports,
+or configs, and performs no training. API requests accept only known validation
+scene IDs and the two available choices.
+
+## If starting from a fresh clone
+
+Reproductions create new local weights; exact GPU numerics can differ. Generate
+the instruction data, reproduce the reference, and choose its cutoff using
+validation, then point a copied semantic config at that local reference config:
 
 ```bash
-uv run --locked python scripts/generate_spatial_pairs.py
-uv run --locked python scripts/run_experiment.py --config configs/shape_cnn_v1.json
-uv run --locked python scripts/compare_thresholds.py --run-dir results/reproductions/shape_cnn_v1 --output-dir results/reproductions/demo_thresholds
-uv run --locked python scripts/demo.py --checkpoint results/reproductions/shape_cnn_v1/model.pt --config results/reproductions/demo_thresholds/selected_config.json
+uv run --locked python scripts/generate_instruction_pairs.py
+uv run --locked python scripts/run_experiment.py --config configs/instruction_cnn_v2.json
+uv run --locked python scripts/run_experiment.py --config configs/instruction_cnn_v2_thresholds.json
+uv run --locked python - <<'CONFIG'
+import json
+from pathlib import Path
+config = json.loads(Path("configs/semantic_dilated_v2.json").read_text())
+config["experiment"] = "local_semantic_demo"
+config["parameters"]["reference_config"] = "results/reproductions/instruction_cnn_v2_thresholds/selected_config.json"
+config["parameters"]["output_dir"] = "results/reproductions/local_semantic_demo"
+Path("results/local_semantic_demo.json").write_text(json.dumps(config, indent=2) + "\n")
+CONFIG
+uv run --locked python scripts/run_experiment.py --config results/local_semantic_demo.json
+uv run --locked python scripts/demo.py --checkpoint results/reproductions/local_semantic_demo/model.pt --config results/reproductions/local_semantic_demo/selected_config.json
 ```
 
-Threshold selection uses validation performance. This route never evaluates the
-test split. The demo verifies the new checkpoint against its own selected config;
-it does not relabel a different checkpoint as the published frozen model.
+These commands assume new output directories. This route does not evaluate test
+performance or relabel reproduced weights as the published frozen checkpoint.
+It selects the reference cutoff and semantic checkpoint from validation only.
 
-## What the page shows
+## Original circle-only demo
 
-Use the dropdown or Previous/Next buttons to browse validation examples in
-manifest order. The first example opens automatically. All validation examples
-are available, including failures; training and test examples are excluded.
+With the original spatial dataset/checkpoint available:
 
-The three panels show the original image, the rendered model prediction, and
-the target. The network receives RGB pixels only. It predicts an edit mask, and
-the fixed renderer paints selected pixels red. Targets and ground-truth masks
-are read after prediction for the reference panel and scoring.
+```bash
+uv run --locked python scripts/demo.py --mode spatial
+```
 
-Scores describe the displayed case:
-
-- **Whole-image result:** exact match only if every pixel equals the target.
-- **Circle edited correctly:** target matches within the circle mask.
-- **Square preserved:** square pixels unchanged from the original input.
-- **Incorrect pixels:** all pixels differing from the target, including the
-  circle, square, and white background.
-
-These are inspection results on known validation data, not a new benchmark.
-This model handles one synthetic fixed task; it does not accept text instructions
-or arbitrary photo uploads. The page uses a three-column desktop layout and a
-stacked layout in narrow browser panels.
-
-The demo reads local artifacts and returns images in memory. It writes no
-datasets, checkpoints, evaluation reports, or configuration files.
+This mode uses `data/shape_edits_v1`, `results/spatial_cnn/model.pt`, and
+`docs/experiments/shape_cnn_v1_selected_config.json` by default, with the original
+0.80 cutoff and 500 validation examples. Only the circle choice is available.
+Custom spatial checkpoints/configs require the same `--mode spatial` flag.
+See the [spatial experiment](spatial_model.md) and [config guide](experiment_configs.md)
+for independent reproductions of that earlier model.
 
 ## Verification
 
-Tests exercise a CPU checkpoint whose all-red prediction has hand-calculated
-errors. They check image output, scores, validation-only selection, rejected
-checkpoint changes, target isolation, and the local HTTP responses. They use
-temporary fixtures and need no original dataset or saved checkpoint.
+Temporary-fixture tests verify both choices with hand-calculated errors, same
+RGB inputs, label isolation, rejected artifact changes, validation-only access,
+CPU inference, and HTTP responses. The semantic fixture's train/test image
+folders are removed entirely. Legacy spatial-mode tests remain in place.
+
+The browser check switches circle to square, confirms the updated target and
+preservation labels, and checks Next while keeping the square choice. An audit
+of all 500 actual validation requests through the demo reproduces the saved
+491 exact edits, 244 exact pairs, and 20 wrong pixels. No test model pass is
+performed by these demo checks.
 
 ```bash
 uv run --locked python -m unittest discover -s tests -v

@@ -14,13 +14,12 @@ The preview shows the first four test examples, rather than examples selected
 for their results. See the [test protocol and limitations](docs/test_evaluation.md)
 and [recorded counts](docs/experiments/shape_cnn_v1_test.json).
 
-**Latest instruction experiment — validation only:** a shared three-class
-perception model plus categorical object selection gets **491/500 edits exact
-(98.2%)** and **244/250 scenes with both edits exact (97.6%)**, versus 311 and
-103 for the previous instruction model. Across three training seeds, exact-edit
-accuracy ranges from **94.8% to 98.2%**. The new model has **7,459 parameters**;
-the instruction test set remains reserved. See the [comparison, seed checks,
-efficiency measurements, and remaining failures](docs/semantic_editor.md).
+**Latest instruction benchmark — frozen test:** a **7,459-parameter** shared
+perception model plus categorical object selection gets **972/1,000 edits exact
+(97.2%)** and **482/500 scenes with both edits exact (96.4%)**. The previous
+instruction model gets 54.2% and 35.6%. Both checkpoints and decoders were
+committed before measuring test performance. See the [frozen test report](docs/instruction_test_evaluation.md)
+and [validation comparisons, seed checks, and efficiency measurements](docs/semantic_editor.md).
 
 A laptop-first project exploring neural networks, diffusion models, and reliable
 image editing through reproducible experiments.
@@ -30,17 +29,17 @@ preserving everything else. We build this in small steps on an Apple-silicon Mac
 
 ## Try the local demo
 
-With the original spatial dataset and saved checkpoint available locally:
+With the instruction dataset and saved semantic checkpoint available locally:
 
 ```bash
 uv run --locked python scripts/demo.py
 ```
 
-Open [the local demo](http://127.0.0.1:7860) to browse all 500 validation examples.
-It shows the input, CNN edit, and target side by side, with exact-match and
-preservation scores for each case. The saved model runs on CPU, using the
-validation-selected threshold; the original model's threshold is 0.80.
-The demo requires no additional dependencies and performs no training.
+Open [the local demo](http://127.0.0.1:7860) to browse **250 validation scenes**.
+Choose **Edit circle** or **Edit square** on the same image. Input, model edit,
+and target appear side by side, with exact-match and preservation scores that
+follow your choice. Inference runs on CPU, with no extra dependency or training.
+The original circle-only demo remains available with `--mode spatial`.
 
 Checkpoints and datasets are excluded from Git. See [the demo guide](docs/demo.md)
 for prerequisites, a fresh-training route, and how to stop the local server.
@@ -62,7 +61,8 @@ for prerequisites, a fresh-training route, and how to stop the local server.
   evaluating test performance. See the [threshold comparison](docs/confidence_thresholds.md).
 - **Freeze decisions before measuring test performance.** The committed
   checkpoint and threshold produced 711 / 1,000 exact test images. That test is
-  now observed; instruction conditioning needs a newly reserved holdout.
+  now observed; instruction conditioning used a separate reserved holdout,
+  which was later evaluated under its own frozen protocol.
   This result concerns synthetic shapes, not real-photo editing or language
   understanding. See the [test protocol](docs/test_evaluation.md).
 - **Make results traceable.** Versioned configs specify settings and training
@@ -480,15 +480,18 @@ weights held fixed, selects a shared **0.95 cutoff** from five declared values.
 Completely correct requests rise to **311 / 500 (62.2%)**, and scenes with both
 edits correct rise to **103 / 250 (41.2%)**. Wrong pixels fall from 4,677 to 1,216,
 although 20 requests lose exactness as the higher cutoff misses more intended
-edits. This remains an imperfect synthetic editor. These are validation results;
-the new test set remains reserved. Larger generative models are later experiments.
+edits. These are the historical validation-selection results; the subsequent
+frozen test is recorded below. Larger generative models are later experiments.
 
 The [joint semantic-model comparison](docs/semantic_editor.md) then tests shared
 object classification, a small encoder/decoder, separable convolutions, and an
 overlap-loss ablation. The simpler dilated segmenter performs best among those
 candidates. Extending the fixed recipe from 40 to 100 epochs across three seeds
 raises validation exact-edit accuracy to 94.8–98.2%, with all earlier results
-retained. The original local demo still runs the original circle-only model.
+retained. The [frozen evaluation](docs/instruction_test_evaluation.md) then gets
+97.2% exact requests and 96.4% exact scene pairs on the reserved test scenes.
+The test is now observed; future improvements need fresh held-out evidence.
+The default demo uses this model and accepts both categorical choices.
 
 The original `scripts/draw_circle.py`, `blue_circle.png`, and `red_circle.png` are kept
 as the first hand-created examples.

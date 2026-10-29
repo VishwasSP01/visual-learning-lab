@@ -1,5 +1,9 @@
 # Instruction conditioning: data contract
 
+**Current status:** the separately reserved instruction test has now been
+[evaluated under a frozen protocol](instruction_test_evaluation.md). References
+to reservation below describe the dataset's original construction stage.
+
 The next task adds a choice to the existing synthetic editor. For every scene,
 the **exact same input image** appears with two different requests:
 

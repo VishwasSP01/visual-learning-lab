@@ -1,5 +1,9 @@
 # Instruction-model validation thresholds
 
+**Current status:** this validation-selected reference was subsequently compared
+with the semantic editor in the [frozen test](instruction_test_evaluation.md).
+The test is now observed; the pre-test protocol and results below are retained.
+
 ## Protocol declared before the full sweep
 
 Keep the 24-epoch conditioned checkpoint fixed. Verify its SHA-256 and the

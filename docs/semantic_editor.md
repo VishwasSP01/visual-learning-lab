@@ -1,5 +1,10 @@
 # Joint perception for more accurate, cheaper categorical editing
 
+**Current status:** the [subsequent frozen test](instruction_test_evaluation.md)
+gets 972/1,000 exact requests (97.2%) and 482/500 exact scene pairs (96.4%).
+The reserved test is now observed. The validation-development account below
+retains its original sequence and pre-test decisions.
+
 ## Protocol declared before the full experiments
 
 The previous binary editor still damages circles during square requests. This
@@ -250,11 +255,12 @@ See the [full decoder report](experiments/semantic_dilated_v2_decoder.json).
 This milestone improves exact editing substantially on the repeatedly used
 synthetic validation split, retains weaker candidates and seeds, and measures
 where shared inference saves work. It does not establish real-image quality or
-general language understanding. The original circle-only local demo has not
-been changed to this model. Reproduction commands above train local checkpoints;
+general language understanding. The default demo now uses this model; the
+original circle-only editor remains available through `--mode spatial`.
+Reproduction commands above train local checkpoints;
 weights and generated datasets stay outside Git.
 
-The instruction test set remains reserved. Before evaluating it, freeze the
-intended model/decoder and evaluation protocol. Additional training or tuning
-should continue to use validation only; current validation numbers are not an
-unseen test score.
+The model and evaluation protocol were subsequently frozen and tested; see the
+[frozen test report](instruction_test_evaluation.md). Further model tuning
+requires fresh held-out evidence; the already observed instruction test cannot
+become an unseen test again.
