@@ -8,8 +8,9 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw
 
+from visual_lab.paths import ROOT
 
-ROOT = Path(__file__).resolve().parent
+
 OUTPUT = ROOT / "data" / "circle_edits_v2"
 SIZE = 64
 SEED = 42

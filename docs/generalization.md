@@ -48,7 +48,7 @@ must still be measured; changing the architecture alone does not guarantee it.
 Reproduce these diagnostics:
 
 ```bash
-uv run --locked python inspect_pixel_model.py
+uv run --locked python scripts/inspect_pixel_model.py
 ```
 
 The diagnostic contract is fixed in the script. All predictions use the saved

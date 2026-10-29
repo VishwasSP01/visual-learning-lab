@@ -1,17 +1,21 @@
 """Probe the saved model's limits without retraining or using the test set."""
 
+import argparse
 import hashlib
 import json
 from pathlib import Path
 
-from PIL import Image, ImageDraw, ImageFont
 import torch
+from PIL import Image, ImageDraw, ImageFont
 
-from evaluate_baseline import recolor_blue, score_prediction, summarize
-from train_pixel_model import PixelMLP, to_image
+from visual_lab.baselines import recolor_blue
+from visual_lab.metrics import score_prediction, summarize
+from visual_lab.models import PixelMLP
+from visual_lab.paths import ROOT
+from visual_lab.provenance import source_hashes
+from visual_lab.rendering import to_image
 
 
-ROOT = Path(__file__).resolve().parent
 OUTPUT = ROOT / "results/pixel_mlp/diagnostics"
 PROBES = [
     ("Blue", (0, 0, 255), True),
@@ -72,6 +76,7 @@ def save_shape_preview(original, prediction, rule, target):
 
 
 def main():
+    argparse.ArgumentParser(description=__doc__).parse_args()
     checkpoint_path = ROOT / "results/pixel_mlp/model.pt"
     checkpoint = torch.load(checkpoint_path, map_location="cpu", weights_only=True)
     model = PixelMLP()
@@ -101,6 +106,7 @@ def main():
         "color_rule": summarize(score_prediction(original, rule, target, mask)),
     }
     report = {
+        "source_files_sha256": source_hashes(),
         "checkpoint_sha256": hashlib.sha256(checkpoint_path.read_bytes()).hexdigest(),
         "device": "cpu", "training_performed": False, "test_dataset_used": False,
         "color_contract": "Exact blue becomes red; all other colors remain unchanged.",

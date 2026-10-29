@@ -8,50 +8,20 @@ import time
 from pathlib import Path
 
 import numpy as np
-from PIL import Image, ImageDraw
 import torch
+from PIL import Image, ImageDraw
 from torch import nn
 from torch.utils.data import DataLoader, TensorDataset
 
-from evaluate_baseline import score_prediction, summarize
+from visual_lab.data.loaders import load_pixel_split as load_split
+from visual_lab.metrics import score_prediction, summarize
+from visual_lab.models import PixelMLP
+from visual_lab.paths import ROOT
+from visual_lab.provenance import source_hashes
+from visual_lab.rendering import to_image
 
 
-ROOT = Path(__file__).resolve().parent
 SEED = 42
-
-
-class PixelMLP(nn.Module):
-    """Apply the same small neural network independently to every RGB pixel."""
-
-    def __init__(self):
-        super().__init__()
-        self.layers = nn.Sequential(nn.Linear(3, 16), nn.ReLU(), nn.Linear(16, 3))
-
-    def forward(self, pixels):
-        return self.layers(pixels)
-
-
-def load_split(data_dir, records, split):
-    """Load input/target pairs only; neither masks nor test images enter training."""
-    selected = [record for record in records if record["split"] == split]
-    if not selected:
-        raise ValueError(f"No {split} examples found; generate the dataset first.")
-    inputs, targets = [], []
-    digest = hashlib.sha256()
-    for record in selected:
-        for kind, destination in (("input", inputs), ("target", targets)):
-            relative = record[kind]
-            path = data_dir / relative
-            digest.update(relative.encode("utf-8") + b"\0" + path.read_bytes())
-            with Image.open(path) as image:
-                if image.mode != "RGB" or image.size != (64, 64):
-                    raise ValueError(f"Expected a 64 x 64 RGB image: {path}")
-                destination.append(np.array(image, dtype=np.uint8))
-    # Keep the full dataset in compact uint8 form. Normalize only each batch.
-    return (
-        torch.from_numpy(np.stack(inputs)), torch.from_numpy(np.stack(targets)),
-        selected, digest.hexdigest(),
-    )
 
 
 def make_loader(inputs, targets, batch_size, shuffle=False):
@@ -71,12 +41,6 @@ def validation_mse(model, loader, device):
         squared_error += nn.functional.mse_loss(model(inputs), targets, reduction="sum").item()
         values += targets.numel()
     return squared_error / values
-
-
-def to_image(pixels):
-    """Use the same declared 8-bit conversion for every model prediction."""
-    array = (pixels.detach().cpu().clamp(0, 1) * 255).round().to(torch.uint8).numpy()
-    return Image.fromarray(array)
 
 
 @torch.no_grad()
@@ -181,6 +145,7 @@ def main():
                     totals[key] = totals.get(key, 0) + count
     scores = summarize(totals)
     report = {
+        "source_files_sha256": source_hashes(),
         "model": "PixelMLP: Linear(3,16), ReLU, Linear(16,3)",
         "parameters": parameters, "seed": SEED, "device": str(device),
         "torch_version": str(torch.__version__), "numpy_version": np.__version__,

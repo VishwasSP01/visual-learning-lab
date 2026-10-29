@@ -8,58 +8,21 @@ import time
 from pathlib import Path
 
 import numpy as np
-from PIL import Image, ImageDraw
 import torch
+from PIL import Image, ImageDraw
 from torch import nn
 from torch.utils.data import DataLoader, TensorDataset
 
-from evaluate_baseline import recolor_blue, score_prediction, summarize
+from visual_lab.baselines import recolor_blue
+from visual_lab.data.loaders import load_spatial_split as load_split
+from visual_lab.metrics import spatial_counts, summarize_spatial
+from visual_lab.models import ShapeEditor
+from visual_lab.paths import ROOT
+from visual_lab.provenance import source_hashes
+from visual_lab.rendering import render_edit
 
 
-ROOT = Path(__file__).resolve().parent
 SEED = 42
-
-
-class ShapeEditor(nn.Module):
-    """Predict edit-region logits from RGB alone, with a 31 x 31 receptive field."""
-
-    def __init__(self):
-        super().__init__()
-        layers = []
-        channels = 3
-        for dilation in (1, 2, 4, 8):
-            layers.extend((nn.Conv2d(channels, 16, 3, padding=dilation, dilation=dilation), nn.ReLU()))
-            channels = 16
-        layers.append(nn.Conv2d(16, 1, 1))
-        self.layers = nn.Sequential(*layers)
-
-    def forward(self, images):
-        return self.layers(images)
-
-
-def load_split(data_dir, records, split):
-    """Masks are supervision targets, never concatenated with the RGB input."""
-    selected = [record for record in records if record["split"] == split]
-    if not selected:
-        raise ValueError(f"No {split} examples found.")
-    inputs, masks = [], []
-    digest = hashlib.sha256()
-    for record in selected:
-        for kind, destination in (("input", inputs), ("mask", masks)):
-            path = data_dir / record[kind]
-            digest.update(record[kind].encode() + b"\0" + path.read_bytes())
-            with Image.open(path) as image:
-                expected_mode = "RGB" if kind == "input" else "L"
-                if image.mode != expected_mode or image.size != (64, 64):
-                    raise ValueError(f"Invalid {kind}: {path}")
-                array = np.array(image, dtype=np.uint8)
-                if kind == "mask":
-                    if set(np.unique(array)) != {0, 255}:
-                        raise ValueError(f"Expected a non-empty binary mask: {path}")
-                    array = (array == 255).astype(np.uint8)
-                destination.append(array)
-    return (torch.from_numpy(np.stack(inputs)), torch.from_numpy(np.stack(masks)),
-            selected, digest.hexdigest())
 
 
 def make_loader(inputs, masks, batch_size, shuffle=False):
@@ -92,48 +55,6 @@ def predict_masks(model, inputs, device):
     images = inputs.permute(0, 3, 1, 2).to(device=device, dtype=torch.float32).contiguous() / 255
     # Fixed decision threshold: sigmoid(logit) >= 0.5, equivalently logit >= 0.
     return (model(images)[:, 0] >= 0).cpu().numpy()
-
-
-def render_edit(original, predicted_mask):
-    """Apply a fixed red color only where the model predicts an edit."""
-    pixels = np.array(original, dtype=np.uint8)
-    if predicted_mask.shape != pixels.shape[:2] or predicted_mask.dtype != np.bool_:
-        raise ValueError("Expected a boolean prediction mask matching the input image.")
-    pixels[predicted_mask] = (255, 0, 0)
-    return Image.fromarray(pixels)
-
-
-def spatial_counts(original, prediction, target, mask, square_mask):
-    """Measure the square separately so the white background cannot hide damage."""
-    counts = score_prediction(original, prediction, target, mask)
-    before, after = np.array(original), np.array(prediction)
-    circle = np.array(mask) == 255
-    square = np.array(square_mask) == 255
-    if square_mask.mode != "L" or square.shape != circle.shape or not square.any() or (circle & square).any():
-        raise ValueError("Invalid square-preservation mask.")
-    same = np.all(before == after, axis=2)
-    changed = np.any(before != after, axis=2)
-    white_background = ~(circle | square)
-    counts.update({
-        "square_pixels": int(square.sum()),
-        "unchanged_square_pixels": int((same & square).sum()),
-        "exact_squares": int(same[square].all()),
-        "white_background_pixels": int(white_background.sum()),
-        "unchanged_white_background_pixels": int((same & white_background).sum()),
-        "mask_intersection": int((changed & circle).sum()),
-        "mask_union": int((changed | circle).sum()),
-    })
-    return counts
-
-
-def summarize_spatial(counts):
-    return {
-        **summarize(counts),
-        "square_preservation": counts["unchanged_square_pixels"] / counts["square_pixels"],
-        "exact_square_preservation": counts["exact_squares"] / counts["images"],
-        "white_background_preservation": counts["unchanged_white_background_pixels"] / counts["white_background_pixels"],
-        "edit_mask_iou": counts["mask_intersection"] / counts["mask_union"],
-    }
 
 
 def save_preview(examples, output):
@@ -235,6 +156,7 @@ def main():
                                  target, Image.fromarray(predicted_mask.astype(np.uint8) * 255)))
 
     report = {
+        "source_files_sha256": source_hashes(),
         "experiment": "shape_cnn_v1", "dataset": "shape_edits_v1", "split": "validation",
         "architecture": "Conv2d 3->16,16->16,16->16,16->16 (3x3; dilations 1,2,4,8; ReLU), 16->1 (1x1)",
         "parameters": parameters, "receptive_field": 31, "seed": SEED,

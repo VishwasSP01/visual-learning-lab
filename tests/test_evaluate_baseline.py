@@ -4,7 +4,8 @@ import unittest
 
 from PIL import Image
 
-from evaluate_baseline import recolor_blue, score_prediction, summarize
+from visual_lab.baselines import recolor_blue
+from visual_lab.metrics import score_prediction, summarize
 
 
 class EvaluationChecks(unittest.TestCase):

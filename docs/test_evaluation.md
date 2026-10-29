@@ -53,8 +53,8 @@ source fingerprint. Per-image records for both methods are saved locally.
 With the original selected checkpoint and generated dataset present:
 
 ```bash
-uv run --locked python -m unittest discover -v
-uv run --locked python evaluate_frozen_model.py
+uv run --locked python -m unittest discover -s tests -v
+uv run --locked python scripts/evaluate_frozen_model.py
 open results/spatial_cnn/frozen_test/preview.png
 ```
 

@@ -4,8 +4,8 @@ import unittest
 
 from PIL import Image
 
-from evaluate_baseline import recolor_blue
-from train_spatial_model import spatial_counts, summarize_spatial
+from visual_lab.baselines import recolor_blue
+from visual_lab.metrics import spatial_counts, summarize_spatial
 
 
 class SpatialMetricChecks(unittest.TestCase):

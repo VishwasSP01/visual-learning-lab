@@ -60,8 +60,8 @@ threshold. Remaining square damage and missed circle pixels are visible.
 After generating the spatial dataset and training the first CNN:
 
 ```bash
-uv run --locked python -m unittest discover -v
-uv run --locked python compare_thresholds.py
+uv run --locked python -m unittest discover -s tests -v
+uv run --locked python scripts/compare_thresholds.py
 open results/spatial_cnn/threshold_sweep/preview.png
 ```
 

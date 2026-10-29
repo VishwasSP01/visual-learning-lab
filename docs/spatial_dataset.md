@@ -63,7 +63,7 @@ editing and square preservation; overall image accuracy alone is insufficient.
 Rebuild the dataset:
 
 ```bash
-uv run --locked python generate_spatial_pairs.py
+uv run --locked python scripts/generate_spatial_pairs.py
 ```
 
 Regeneration overwrites this dataset's generated files. The subsequent

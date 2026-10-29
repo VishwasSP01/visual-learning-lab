@@ -6,32 +6,15 @@ import json
 from pathlib import Path
 
 import numpy as np
-from PIL import Image, ImageDraw
 import torch
+from PIL import Image, ImageDraw
 
-from train_spatial_model import ShapeEditor, predict_masks, render_edit
-
-
-ROOT = Path(__file__).resolve().parent
-
-
-def boundary_band(mask, radius=2):
-    """Pixels within a square-neighborhood radius of either side of a boundary."""
-    height, width = mask.shape
-    padded = np.pad(mask, radius, constant_values=False)
-    neighborhoods = [padded[y:y + height, x:x + width]
-                     for y in range(2 * radius + 1) for x in range(2 * radius + 1)]
-    return np.logical_or.reduce(neighborhoods) & ~np.logical_and.reduce(neighborhoods)
-
-
-def empty_pixel_gap(first, second):
-    """Minimum Chebyshev foreground distance minus one; adjacent pixels have gap 0."""
-    first_pixels = np.argwhere(first)
-    second_pixels = np.argwhere(second)
-    if len(first_pixels) == 0 or len(second_pixels) == 0 or (first & second).any():
-        raise ValueError("Expected separate, non-empty shapes.")
-    distances = np.abs(first_pixels[:, None, :] - second_pixels[None, :, :]).max(axis=2)
-    return int(distances.min()) - 1
+from visual_lab.experiments.spatial_training import predict_masks
+from visual_lab.geometry import boundary_band, empty_pixel_gap
+from visual_lab.models import ShapeEditor
+from visual_lab.paths import ROOT
+from visual_lab.provenance import source_hashes
+from visual_lab.rendering import render_edit
 
 
 def gap_group(gap):
@@ -162,6 +145,7 @@ def main():
         raise ValueError("Reloaded model does not reproduce the reference image counts.")
     worst = sorted(cases, key=lambda case: (-case["error_pixels"], case["id"]))[:4]
     report = {
+        "source_files_sha256": source_hashes(),
         "experiment": "shape_cnn_v1_error_analysis", "split": "validation",
         "images": len(cases), "exact_images": counts["exact_images"],
         "failed_images": len(cases) - counts["exact_images"],

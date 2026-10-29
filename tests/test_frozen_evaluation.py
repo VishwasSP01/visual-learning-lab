@@ -3,7 +3,7 @@
 import hashlib
 import unittest
 
-from evaluate_frozen_model import validate_configuration
+from visual_lab.experiments.frozen_evaluation import validate_configuration
 
 
 class FrozenConfigurationChecks(unittest.TestCase):

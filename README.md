@@ -20,6 +20,26 @@ image editing through reproducible experiments.
 The goal is to learn how models change a requested part of an image while
 preserving everything else. We build this in small steps on an Apple-silicon Mac.
 
+## Repository layout
+
+```text
+src/visual_lab/
+  data/          # Synthetic generators and supervised split loaders
+  experiments/   # Training, evaluation, and analysis pipelines
+  models.py      # PixelMLP and ShapeEditor architectures
+  metrics.py     # Exact-image, edit, and preservation measurements
+  rendering.py   # Fixed mask renderer and RGB conversion
+scripts/         # Thin commands that call the package
+tests/           # Fixture-based unit tests
+docs/            # Learning notes, recorded reports, and previews
+```
+
+`uv sync --locked` installs `visual_lab` in editable mode from `src/`.
+Run commands from this repository with `uv run --locked python scripts/<name>.py`.
+Datasets and checkpoints remain in the ignored `data/` and `results/` folders.
+See [the refactor verification](docs/repository_structure.md) for compatibility
+with the recorded experiment and its original source hashes.
+
 ## First milestone: build the data
 
 Our first task is deliberately simple:
@@ -47,7 +67,7 @@ these commands from the repository directory:
 
 ```bash
 uv sync --locked
-uv run --locked python generate_pairs.py
+uv run --locked python scripts/generate_pairs.py
 open data/circle_edits_v2/preview.png
 ```
 
@@ -100,7 +120,7 @@ Run the same checks locally:
 
 ```bash
 uv sync --locked
-uv run --locked python -m unittest discover -v
+uv run --locked python -m unittest discover -s tests -v
 ```
 
 ## How to read the preview
@@ -123,8 +143,8 @@ to produce its output. The evaluator reads targets and masks to score results.
 Run the baseline and its hand-calculated metric checks:
 
 ```bash
-uv run --locked python -m unittest -v test_evaluate_baseline
-uv run --locked python evaluate_baseline.py
+uv run --locked python -m unittest -v tests.test_evaluate_baseline
+uv run --locked python scripts/evaluate_baseline.py
 open results/baselines/validation_preview.png
 ```
 
@@ -164,7 +184,7 @@ It applies the same learned transformation independently to each pixel.
 
 ```bash
 uv sync --locked
-uv run --locked python train_pixel_model.py
+uv run --locked python scripts/train_pixel_model.py
 open results/pixel_mlp/preview.png
 ```
 
@@ -203,7 +223,7 @@ of pixels, parameters, loss, backpropagation, and epochs.
 ## Inspecting generalization
 
 ```bash
-uv run --locked python inspect_pixel_model.py
+uv run --locked python scripts/inspect_pixel_model.py
 open results/pixel_mlp/diagnostics/colors.png
 open results/pixel_mlp/diagnostics/shapes.png
 ```
@@ -226,7 +246,7 @@ general editing ability. See [the explanation](docs/generalization.md) and
 ## Next dataset: edit by shape rather than color
 
 ```bash
-uv run --locked python generate_spatial_pairs.py
+uv run --locked python scripts/generate_spatial_pairs.py
 open data/shape_edits_v1/preview.png
 ```
 
@@ -249,8 +269,8 @@ input, target, circle edit mask, and square preservation mask.
 ## First spatial model: learn where to edit
 
 ```bash
-uv run --locked python -m unittest discover -v
-uv run --locked python train_spatial_model.py
+uv run --locked python -m unittest discover -s tests -v
+uv run --locked python scripts/train_spatial_model.py
 open results/spatial_cnn/preview.png
 ```
 
@@ -284,7 +304,7 @@ excluded from Git.
 ## Diagnose the remaining errors
 
 ```bash
-uv run --locked python analyze_spatial_errors.py
+uv run --locked python scripts/analyze_spatial_errors.py
 open results/spatial_cnn/error_analysis/worst_cases.png
 ```
 
@@ -305,7 +325,7 @@ thresholds were changed during this analysis.
 ## Compare confidence thresholds
 
 ```bash
-uv run --locked python compare_thresholds.py
+uv run --locked python scripts/compare_thresholds.py
 open results/spatial_cnn/threshold_sweep/preview.png
 ```
 
@@ -331,7 +351,7 @@ See [the threshold experiment](docs/confidence_thresholds.md),
 ## Evaluate the frozen model on test data
 
 ```bash
-uv run --locked python evaluate_frozen_model.py
+uv run --locked python scripts/evaluate_frozen_model.py
 open results/spatial_cnn/frozen_test/preview.png
 ```
 
@@ -369,5 +389,5 @@ can introduce instruction conditioning: choosing which shape to edit from a
 request, with a newly reserved holdout. Larger generative models are later
 experiments, not a requirement for finishing the first milestones.
 
-The original `draw_circle.py`, `blue_circle.png`, and `red_circle.png` are kept
+The original `scripts/draw_circle.py`, `blue_circle.png`, and `red_circle.png` are kept
 as the first hand-created examples.

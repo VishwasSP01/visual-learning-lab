@@ -3,36 +3,18 @@
 import argparse
 import hashlib
 import json
-import math
 from pathlib import Path
 
 import numpy as np
-from PIL import Image, ImageDraw
 import torch
+from PIL import Image, ImageDraw
 
-from train_spatial_model import ShapeEditor, render_edit, spatial_counts, summarize_spatial
-
-
-ROOT = Path(__file__).resolve().parent
-THRESHOLDS = (0.50, 0.70, 0.80, 0.90, 0.95)
-SELECTION_RULE = "Most exact validation images; then fewest wrong pixels; then lowest threshold."
-
-
-def apply_threshold(logits, threshold):
-    """Compare logits directly, equivalent to sigmoid(logits) >= threshold."""
-    if not 0 < threshold < 1:
-        raise ValueError("Threshold must be strictly between 0 and 1.")
-    return logits >= math.log(threshold / (1 - threshold))
-
-
-def select_candidate(candidates):
-    if not candidates:
-        raise ValueError("No candidates to select.")
-    return max(candidates, key=lambda candidate: (
-        candidate["scores"]["counts"]["exact_images"],
-        -(candidate["scores"]["counts"]["pixels"] - candidate["scores"]["counts"]["correct_pixels"]),
-        -candidate["threshold"],
-    ))
+from visual_lab.metrics import spatial_counts, summarize_spatial
+from visual_lab.models import ShapeEditor
+from visual_lab.paths import ROOT
+from visual_lab.provenance import source_hashes
+from visual_lab.rendering import render_edit
+from visual_lab.thresholds import THRESHOLDS, SELECTION_RULE, apply_threshold, select_candidate
 
 
 def save_preview(indices, records, images, logits, threshold, output):
@@ -138,6 +120,7 @@ def main():
         "lost_exactness": sum(a["exact"] and not b["exact"] for a, b in zip(baseline_cases, selected_cases, strict=True)),
     }
     report = {
+        "source_files_sha256": source_hashes(),
         "experiment": "shape_cnn_v1_threshold_sweep", "dataset": "shape_edits_v1",
         "split": "validation", "images": len(records), "threshold_grid": list(THRESHOLDS),
         "selection_rule": SELECTION_RULE, "selected_threshold": selected_threshold,

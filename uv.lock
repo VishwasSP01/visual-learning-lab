@@ -404,7 +404,7 @@ wheels = [
 [[package]]
 name = "visual-learning-lab"
 version = "0.1.0"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "numpy" },
     { name = "pillow" },

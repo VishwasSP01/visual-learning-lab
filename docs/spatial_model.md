@@ -73,9 +73,9 @@ data, not final test results or evidence of arbitrary shape recognition.
 
 ```bash
 uv sync --locked
-uv run --locked python generate_spatial_pairs.py
-uv run --locked python -m unittest discover -v
-uv run --locked python train_spatial_model.py
+uv run --locked python scripts/generate_spatial_pairs.py
+uv run --locked python -m unittest discover -s tests -v
+uv run --locked python scripts/train_spatial_model.py
 open results/spatial_cnn/preview.png
 ```
 

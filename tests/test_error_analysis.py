@@ -4,7 +4,7 @@ import unittest
 
 import numpy as np
 
-from analyze_spatial_errors import boundary_band, empty_pixel_gap
+from visual_lab.geometry import boundary_band, empty_pixel_gap
 
 
 class GeometryChecks(unittest.TestCase):

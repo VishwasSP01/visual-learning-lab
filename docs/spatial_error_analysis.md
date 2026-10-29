@@ -61,8 +61,8 @@ The reproducible script also saves all 500 per-example records locally.
 After generating the dataset and training the first CNN:
 
 ```bash
-uv run --locked python -m unittest discover -v
-uv run --locked python analyze_spatial_errors.py
+uv run --locked python -m unittest discover -s tests -v
+uv run --locked python scripts/analyze_spatial_errors.py
 open results/spatial_cnn/error_analysis/worst_cases.png
 ```
 

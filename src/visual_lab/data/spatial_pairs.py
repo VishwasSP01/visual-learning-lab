@@ -8,10 +8,10 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw
 
-from generate_pairs import SIZE, SEED, SPLITS, SPLIT_TILES, overlaps, verify_saved_pair
+from visual_lab.data.circle_pairs import SIZE, SEED, SPLITS, SPLIT_TILES, overlaps, verify_saved_pair
+from visual_lab.paths import ROOT
 
 
-ROOT = Path(__file__).resolve().parent
 OUTPUT = ROOT / "data/shape_edits_v1"
 INSTRUCTION = "Change the blue circle to red. Keep the blue square and background unchanged."
 

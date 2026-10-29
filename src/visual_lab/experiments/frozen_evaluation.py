@@ -6,15 +6,16 @@ import json
 from pathlib import Path
 
 import numpy as np
-from PIL import Image, ImageDraw
 import torch
+from PIL import Image, ImageDraw
 
-from compare_thresholds import apply_threshold
-from evaluate_baseline import recolor_blue
-from train_spatial_model import ShapeEditor, render_edit, spatial_counts, summarize_spatial
-
-
-ROOT = Path(__file__).resolve().parent
+from visual_lab.baselines import recolor_blue
+from visual_lab.metrics import spatial_counts, summarize_spatial
+from visual_lab.models import ShapeEditor
+from visual_lab.paths import ROOT
+from visual_lab.provenance import source_hashes
+from visual_lab.rendering import render_edit
+from visual_lab.thresholds import apply_threshold
 
 
 def validate_configuration(config, checkpoint_bytes, manifest_bytes):
@@ -110,6 +111,7 @@ def main():
     if checkpoint_path.read_bytes() != checkpoint_bytes or args.config.read_bytes() != config_bytes:
         raise ValueError("Frozen model or configuration changed during evaluation.")
     report = {
+        "source_files_sha256": source_hashes(),
         "experiment": "shape_cnn_v1_frozen_test", "dataset": "shape_edits_v1",
         "split": "test", "images": len(records), "mask_probability_threshold": threshold,
         "checkpoint_sha256": config["checkpoint_sha256"],

@@ -4,7 +4,7 @@ import unittest
 
 import numpy as np
 
-from compare_thresholds import apply_threshold, select_candidate
+from visual_lab.thresholds import apply_threshold, select_candidate
 
 
 class ThresholdChecks(unittest.TestCase):
