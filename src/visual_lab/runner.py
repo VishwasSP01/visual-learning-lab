@@ -19,6 +19,9 @@ SPATIAL_ANALYSIS = {"data_dir": Path, "run_dir": Path, "output_dir": Path}
 COMMANDS = {
     "train_pixel_model": ("pixel_training", TRAINING),
     "train_spatial_model": ("spatial_training", TRAINING),
+    "train_instruction_model": ("instruction_training", {
+        **TRAINING, "mask_threshold": float, "manifest_sha256": str,
+    }),
     "evaluate_baseline": ("baseline_evaluation", {
         "data_dir": Path, "split": str, "output_dir": Path,
     }),
@@ -80,6 +83,10 @@ def load_configuration(path, root=ROOT):
             raise ValueError("device must be auto, cpu, or mps.")
         if key == "split" and value not in ("train", "validation", "test"):
             raise ValueError("split must be train, validation, or test.")
+        if key == "mask_threshold" and not 0 < value < 1:
+            raise ValueError("mask_threshold must be strictly between 0 and 1.")
+        if key == "manifest_sha256" and not re.fullmatch(r"[0-9a-f]{64}", value):
+            raise ValueError("manifest_sha256 must be a lowercase SHA-256 digest.")
         resolved[key] = str((root / value).resolve()) if kind is Path else value
     return module, resolved, {
         "path": str(path), "sha256": hashlib.sha256(raw).hexdigest(),

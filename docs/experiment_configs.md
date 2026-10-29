@@ -22,6 +22,7 @@ non-finite numbers, invalid seeds, and nonpositive training settings.
 | `configs/color_baselines.json` | Color-only validation baselines | `data/circle_edits_v2` |
 | `configs/pixel_mlp_v1.json` | Train PixelMLP | `data/circle_edits_v2` |
 | `configs/shape_cnn_v1.json` | Train ShapeEditor | `data/shape_edits_v1` |
+| `configs/instruction_cnn_v1.json` | Train conditioned CNN and matched constant-ID control | `data/instruction_edits_v1`, with the declared manifest hash |
 | `configs/pixel_diagnostics.json` | Saved PixelMLP probes | `results/pixel_mlp/model.pt` |
 | `configs/shape_cnn_v1_errors.json` | Frozen CNN validation error analysis | Original spatial checkpoint, validation report, and dataset |
 | `configs/shape_cnn_v1_thresholds.json` | Declared validation threshold grid | Original spatial checkpoint, validation report, and dataset |
@@ -75,7 +76,10 @@ commands keep their original overwrite behavior.
 - `source_files_sha256` and `environment_files_sha256`: package/command source
   plus `pyproject.toml` and `uv.lock`. Existing data and checkpoint hashes remain.
 
-The two training configs reproduce the original seed and hyperparameters. Exact
+The two original training configs reproduce their original seed and hyperparameters.
+The instruction config declares a separate paired-task experiment; its mask
+threshold and manifest hash are explicit. See [its protocol](instruction_model.md).
+Exact
 numerics can still vary across devices, operating systems, and GPU kernels.
 Historical reports are not amended with today's commit, which did not produce
 their original results.

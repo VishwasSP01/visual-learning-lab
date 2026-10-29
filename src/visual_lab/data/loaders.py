@@ -53,3 +53,19 @@ def load_spatial_split(data_dir, records, split):
                 destination.append(array)
     return (torch.from_numpy(np.stack(inputs)), torch.from_numpy(np.stack(masks)),
             selected, digest.hexdigest())
+
+
+def load_instruction_split(data_dir, records, split):
+    """Only training/validation images may enter this first conditioning experiment."""
+    if split not in ("train", "validation"):
+        raise ValueError("Instruction training only loads train or validation; test remains reserved.")
+    from visual_lab.data.instruction_pairs import audit_records
+
+    audit_records(records)  # Manifest-only checks; no image from another split is opened.
+    inputs, masks, selected, digest = load_spatial_split(data_dir, records, split)
+    for record, pixels in zip(selected, inputs, strict=True):
+        actual = hashlib.sha256(pixels.numpy().tobytes()).hexdigest()
+        if actual != record["input_sha256"]:
+            raise ValueError(f"Input pixels differ from the manifest: {record['id']}")
+    instruction_ids = torch.tensor([record["instruction_id"] for record in selected], dtype=torch.long)
+    return inputs, instruction_ids, masks, selected, digest

@@ -92,7 +92,7 @@ uv run --locked python scripts/run_experiment.py --config configs/shape_cnn_v1.j
 
 The config specifies the data, seed, training settings, device, and output path.
 Add `--dry-run` to validate and display those settings without training or writing
-files. Seven configs cover the existing training, baseline, and analysis pipelines.
+files. Eight configs cover the training, baseline, and analysis pipelines.
 Their outputs go to `results/reproductions/`; the runner refuses to reuse an
 existing output directory. The original commands below remain available.
 
@@ -451,7 +451,7 @@ The first experiment is now recorded through frozen test evaluation. The next
 data milestone introduces **instruction conditioning**: each scene has both an
 “edit circle” and an “edit square” request, kept together in one split. The
 generator creates 3,250 unique scenes and 6,500 requests, with fresh validation
-and test examples. No instruction-conditioned model has been trained yet.
+and test examples. The next model receives RGB plus a learned instruction embedding.
 
 ```bash
 uv run --locked python scripts/generate_instruction_pairs.py
@@ -461,7 +461,9 @@ See [the instruction data contract](docs/instruction_conditioning.md) for scene
 grouping, categorical instruction IDs, label rules, and the paired-scene metric.
 The [recorded construction audit](docs/experiments/instruction_edits_v1_data.json)
 verifies all 6,500 requests and zero input overlap with the previous spatial dataset.
-Larger generative models are later experiments.
+The [first conditioning protocol](docs/instruction_model.md) declares a matched
+instruction-blind comparison, 12 epochs, and a fixed 0.50 mask threshold before
+the full training run. Larger generative models are later experiments.
 
 The original `scripts/draw_circle.py`, `blue_circle.png`, and `red_circle.png` are kept
 as the first hand-created examples.
