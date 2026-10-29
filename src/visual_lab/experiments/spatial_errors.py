@@ -13,7 +13,7 @@ from visual_lab.experiments.spatial_training import predict_masks
 from visual_lab.geometry import boundary_band, empty_pixel_gap
 from visual_lab.models import ShapeEditor
 from visual_lab.paths import ROOT
-from visual_lab.provenance import source_hashes
+from visual_lab.provenance import run_metadata
 from visual_lab.rendering import render_edit
 
 
@@ -66,12 +66,15 @@ def save_worst_preview(selected, data_dir, model, output):
     sheet.save(output)
 
 
-def main():
+def main(argv=None, *, run_context=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--data-dir", type=Path, default=ROOT / "data/shape_edits_v1")
     parser.add_argument("--run-dir", type=Path, default=ROOT / "results/spatial_cnn")
-    args = parser.parse_args()
-    output = args.run_dir / "error_analysis"
+    parser.add_argument("--output-dir", type=Path)
+    args = parser.parse_args(argv)
+    args.output_dir = args.output_dir or args.run_dir / "error_analysis"
+    metadata = run_metadata(args, configuration=run_context)
+    output = args.output_dir
     reference_bytes = (args.run_dir / "validation.json").read_bytes()
     reference = json.loads(reference_bytes)
     if reference["split"] != "validation" or reference["dataset"] != "shape_edits_v1":
@@ -145,7 +148,7 @@ def main():
         raise ValueError("Reloaded model does not reproduce the reference image counts.")
     worst = sorted(cases, key=lambda case: (-case["error_pixels"], case["id"]))[:4]
     report = {
-        "source_files_sha256": source_hashes(),
+        **metadata,
         "experiment": "shape_cnn_v1_error_analysis", "split": "validation",
         "images": len(cases), "exact_images": counts["exact_images"],
         "failed_images": len(cases) - counts["exact_images"],

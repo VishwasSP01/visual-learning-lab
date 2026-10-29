@@ -14,6 +14,7 @@ class CommandChecks(unittest.TestCase):
             "generate_pairs", "generate_spatial_pairs", "evaluate_baseline",
             "train_pixel_model", "train_spatial_model", "inspect_pixel_model",
             "analyze_spatial_errors", "compare_thresholds", "evaluate_frozen_model",
+            "run_experiment",
         )
         with tempfile.TemporaryDirectory() as working_directory:
             for name in commands:

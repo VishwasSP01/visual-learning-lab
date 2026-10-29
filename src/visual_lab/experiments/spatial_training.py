@@ -18,17 +18,17 @@ from visual_lab.data.loaders import load_spatial_split as load_split
 from visual_lab.metrics import spatial_counts, summarize_spatial
 from visual_lab.models import ShapeEditor
 from visual_lab.paths import ROOT
-from visual_lab.provenance import source_hashes
+from visual_lab.provenance import run_metadata
 from visual_lab.rendering import render_edit
 
 
 SEED = 42
 
 
-def make_loader(inputs, masks, batch_size, shuffle=False):
+def make_loader(inputs, masks, batch_size, shuffle=False, seed=SEED):
     return DataLoader(
         TensorDataset(inputs, masks), batch_size=batch_size, shuffle=shuffle,
-        generator=torch.Generator().manual_seed(SEED), num_workers=0,
+        generator=torch.Generator().manual_seed(seed), num_workers=0,
     )
 
 
@@ -70,15 +70,19 @@ def save_preview(examples, output):
     sheet.save(output)
 
 
-def main():
+def main(argv=None, *, run_context=None):
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--seed", type=int, default=SEED)
     parser.add_argument("--epochs", type=int, default=12)
     parser.add_argument("--batch-size", type=int, default=64)
     parser.add_argument("--learning-rate", type=float, default=0.001)
     parser.add_argument("--device", choices=("auto", "cpu", "mps"), default="auto")
     parser.add_argument("--data-dir", type=Path, default=ROOT / "data/shape_edits_v1")
     parser.add_argument("--output-dir", type=Path, default=ROOT / "results/spatial_cnn")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
+    if not 0 <= args.seed < 2**32:
+        parser.error("Seed must be in [0, 2**32).")
+    metadata = run_metadata(args, seed=args.seed, configuration=run_context)
     if args.epochs <= 0 or args.batch_size <= 0 or args.learning_rate <= 0:
         parser.error("Epochs, batch size, and learning rate must be positive.")
     if args.device == "mps" and not torch.backends.mps.is_available():
@@ -87,17 +91,17 @@ def main():
     if name == "auto":
         name = "mps" if torch.backends.mps.is_available() else "cpu"
     device = torch.device(name)
-    random.seed(SEED)
-    np.random.seed(SEED)
-    torch.manual_seed(SEED)
+    random.seed(args.seed)
+    np.random.seed(args.seed)
+    torch.manual_seed(args.seed)
     torch.set_num_threads(4)
     started = time.perf_counter()
     manifest = (args.data_dir / "manifest.jsonl").read_bytes()
     records = [json.loads(line) for line in manifest.decode().splitlines()]
     train_inputs, train_masks, train_records, train_hash = load_split(args.data_dir, records, "train")
     val_inputs, val_masks, val_records, val_hash = load_split(args.data_dir, records, "validation")
-    train_loader = make_loader(train_inputs, train_masks, args.batch_size, shuffle=True)
-    val_loader = make_loader(val_inputs, val_masks, args.batch_size)
+    train_loader = make_loader(train_inputs, train_masks, args.batch_size, shuffle=True, seed=args.seed)
+    val_loader = make_loader(val_inputs, val_masks, args.batch_size, seed=args.seed)
     positives = int(train_masks.sum().item())
     negatives = train_masks.numel() - positives
     positive_weight = negatives / positives
@@ -156,10 +160,10 @@ def main():
                                  target, Image.fromarray(predicted_mask.astype(np.uint8) * 255)))
 
     report = {
-        "source_files_sha256": source_hashes(),
+        **metadata,
         "experiment": "shape_cnn_v1", "dataset": "shape_edits_v1", "split": "validation",
         "architecture": "Conv2d 3->16,16->16,16->16,16->16 (3x3; dilations 1,2,4,8; ReLU), 16->1 (1x1)",
-        "parameters": parameters, "receptive_field": 31, "seed": SEED,
+        "parameters": parameters, "receptive_field": 31,
         "device": str(device), "torch_version": str(torch.__version__),
         "epochs": args.epochs, "batch_size": args.batch_size,
         "optimizer": "Adam", "learning_rate": args.learning_rate,
@@ -179,7 +183,7 @@ def main():
         "elapsed_seconds": time.perf_counter() - started,
     }
     args.output_dir.mkdir(parents=True, exist_ok=True)
-    torch.save({"model_state": best_state, "architecture": report["architecture"],
+    torch.save({"seed": args.seed, "model_state": best_state, "architecture": report["architecture"],
                 "selected_epoch": best_epoch}, args.output_dir / "model.pt")
     (args.output_dir / "validation.json").write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     save_preview(examples, args.output_dir / "preview.png")

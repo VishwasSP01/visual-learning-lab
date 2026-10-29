@@ -10,7 +10,7 @@ from PIL import Image, ImageDraw
 from visual_lab.baselines import recolor_blue
 from visual_lab.metrics import score_prediction, summarize
 from visual_lab.paths import ROOT
-from visual_lab.provenance import source_hashes
+from visual_lab.provenance import run_metadata
 
 
 def save_preview(examples, output):
@@ -26,12 +26,13 @@ def save_preview(examples, output):
     sheet.save(output)
 
 
-def main():
+def main(argv=None, *, run_context=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--data-dir", type=Path, default=ROOT / "data/circle_edits_v2")
     parser.add_argument("--split", choices=("train", "validation", "test"), default="validation")
     parser.add_argument("--output-dir", type=Path, default=ROOT / "results/baselines")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
+    metadata = run_metadata(args, configuration=run_context)
     manifest_path = args.data_dir / "manifest.jsonl"
     if not manifest_path.is_file():
         parser.error("Dataset missing. Run: uv run --locked python scripts/generate_pairs.py")
@@ -66,7 +67,7 @@ def main():
             examples.append((original, predictions["unchanged"], predictions["color_rule"], target))
 
     report = {
-        "source_files_sha256": source_hashes(),
+        **metadata,
         "dataset": "circle_edits_v2", "split": args.split, "examples": len(records),
         "manifest_sha256": hashlib.sha256(manifest).hexdigest(),
         "evaluated_files_sha256": data_hash.hexdigest(),

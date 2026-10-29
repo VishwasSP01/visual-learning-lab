@@ -17,17 +17,17 @@ from visual_lab.data.loaders import load_pixel_split as load_split
 from visual_lab.metrics import score_prediction, summarize
 from visual_lab.models import PixelMLP
 from visual_lab.paths import ROOT
-from visual_lab.provenance import source_hashes
+from visual_lab.provenance import run_metadata
 from visual_lab.rendering import to_image
 
 
 SEED = 42
 
 
-def make_loader(inputs, targets, batch_size, shuffle=False):
+def make_loader(inputs, targets, batch_size, shuffle=False, seed=SEED):
     return DataLoader(
         TensorDataset(inputs, targets), batch_size=batch_size, shuffle=shuffle,
-        generator=torch.Generator().manual_seed(SEED), num_workers=0,
+        generator=torch.Generator().manual_seed(seed), num_workers=0,
     )
 
 
@@ -64,15 +64,19 @@ def save_preview(originals, before, after, targets, output):
     sheet.save(output)
 
 
-def main():
+def main(argv=None, *, run_context=None):
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--seed", type=int, default=SEED)
     parser.add_argument("--epochs", type=int, default=10)
     parser.add_argument("--batch-size", type=int, default=64)
     parser.add_argument("--learning-rate", type=float, default=0.01)
     parser.add_argument("--device", choices=("auto", "cpu", "mps"), default="auto")
     parser.add_argument("--data-dir", type=Path, default=ROOT / "data/circle_edits_v2")
     parser.add_argument("--output-dir", type=Path, default=ROOT / "results/pixel_mlp")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
+    if not 0 <= args.seed < 2**32:
+        parser.error("Seed must be in [0, 2**32).")
+    metadata = run_metadata(args, seed=args.seed, configuration=run_context)
     if args.epochs <= 0 or args.batch_size <= 0 or args.learning_rate <= 0:
         parser.error("Epochs, batch size, and learning rate must be positive.")
     if args.device == "mps" and not torch.backends.mps.is_available():
@@ -81,9 +85,9 @@ def main():
     if device_name == "auto":
         device_name = "mps" if torch.backends.mps.is_available() else "cpu"
     device = torch.device(device_name)
-    random.seed(SEED)
-    np.random.seed(SEED)
-    torch.manual_seed(SEED)
+    random.seed(args.seed)
+    np.random.seed(args.seed)
+    torch.manual_seed(args.seed)
     torch.set_num_threads(4)
     started = time.perf_counter()
 
@@ -91,8 +95,8 @@ def main():
     records = [json.loads(line) for line in manifest.decode("utf-8").splitlines()]
     train_inputs, train_targets, train_records, train_hash = load_split(args.data_dir, records, "train")
     val_inputs, val_targets, val_records, val_hash = load_split(args.data_dir, records, "validation")
-    train_loader = make_loader(train_inputs, train_targets, args.batch_size, shuffle=True)
-    val_loader = make_loader(val_inputs, val_targets, args.batch_size)
+    train_loader = make_loader(train_inputs, train_targets, args.batch_size, shuffle=True, seed=args.seed)
+    val_loader = make_loader(val_inputs, val_targets, args.batch_size, seed=args.seed)
     model = PixelMLP().to(device)
     parameters = sum(parameter.numel() for parameter in model.parameters())
     optimizer = torch.optim.Adam(model.parameters(), lr=args.learning_rate)
@@ -145,9 +149,9 @@ def main():
                     totals[key] = totals.get(key, 0) + count
     scores = summarize(totals)
     report = {
-        "source_files_sha256": source_hashes(),
+        **metadata,
         "model": "PixelMLP: Linear(3,16), ReLU, Linear(16,3)",
-        "parameters": parameters, "seed": SEED, "device": str(device),
+        "parameters": parameters, "device": str(device),
         "torch_version": str(torch.__version__), "numpy_version": np.__version__,
         "epochs": args.epochs, "batch_size": args.batch_size,
         "optimizer": "Adam", "learning_rate": args.learning_rate,
@@ -166,7 +170,7 @@ def main():
         "elapsed_seconds": time.perf_counter() - started,
     }
     args.output_dir.mkdir(parents=True, exist_ok=True)
-    torch.save({"model_state": best_state, "architecture": report["model"],
+    torch.save({"seed": args.seed, "model_state": best_state, "architecture": report["model"],
                 "selected_epoch": best_epoch}, args.output_dir / "model.pt")
     report_path = args.output_dir / "validation.json"
     report_path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")

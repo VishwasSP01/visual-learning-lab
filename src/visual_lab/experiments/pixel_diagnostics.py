@@ -12,11 +12,10 @@ from visual_lab.baselines import recolor_blue
 from visual_lab.metrics import score_prediction, summarize
 from visual_lab.models import PixelMLP
 from visual_lab.paths import ROOT
-from visual_lab.provenance import source_hashes
+from visual_lab.provenance import run_metadata
 from visual_lab.rendering import to_image
 
 
-OUTPUT = ROOT / "results/pixel_mlp/diagnostics"
 PROBES = [
     ("Blue", (0, 0, 255), True),
     ("Green", (0, 128, 0), True),
@@ -29,7 +28,7 @@ PROBES = [
 ]
 
 
-def save_color_preview(cases):
+def save_color_preview(cases, output):
     font = ImageFont.load_default(size=14)
     image = Image.new("RGB", (650, 68 + len(cases) * 64), "white")
     draw = ImageDraw.Draw(image)
@@ -45,7 +44,7 @@ def save_color_preview(cases):
         for x, field in ((185, "input"), (340, "prediction"), (495, "expected")):
             draw.rectangle((x, y + 3, x + 122, y + 29), fill=tuple(case[field]), outline="#888888")
             draw.text((x, y + 36), str(tuple(case[field])), fill="black")
-    image.save(OUTPUT / "colors.png")
+    image.save(output / "colors.png")
 
 
 def make_shape_probe():
@@ -60,7 +59,7 @@ def make_shape_probe():
     return original, target, mask
 
 
-def save_shape_preview(original, prediction, rule, target):
+def save_shape_preview(original, prediction, rule, target, output):
     cell = 128
     image = Image.new("RGB", (4 * cell, 184), "#e8e8e8")
     draw = ImageDraw.Draw(image)
@@ -72,12 +71,18 @@ def save_shape_preview(original, prediction, rule, target):
         draw.text((x + 5, 6), title, fill="black")
         image.paste(result.resize((cell, cell), Image.Resampling.NEAREST), (x, 24))
     draw.text((6, 161), "New task: recolor the circle; preserve the blue square.", fill="black")
-    image.save(OUTPUT / "shapes.png")
+    image.save(output / "shapes.png")
 
 
-def main():
-    argparse.ArgumentParser(description=__doc__).parse_args()
-    checkpoint_path = ROOT / "results/pixel_mlp/model.pt"
+def main(argv=None, *, run_context=None):
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--run-dir", type=Path, default=ROOT / "results/pixel_mlp")
+    parser.add_argument("--output-dir", type=Path)
+    args = parser.parse_args(argv)
+    args.output_dir = args.output_dir or args.run_dir / "diagnostics"
+    metadata = run_metadata(args, configuration=run_context)
+    output = args.output_dir
+    checkpoint_path = args.run_dir / "model.pt"
     checkpoint = torch.load(checkpoint_path, map_location="cpu", weights_only=True)
     model = PixelMLP()
     model.load_state_dict(checkpoint["model_state"])
@@ -106,7 +111,7 @@ def main():
         "color_rule": summarize(score_prediction(original, rule, target, mask)),
     }
     report = {
-        "source_files_sha256": source_hashes(),
+        **metadata,
         "checkpoint_sha256": hashlib.sha256(checkpoint_path.read_bytes()).hexdigest(),
         "device": "cpu", "training_performed": False, "test_dataset_used": False,
         "color_contract": "Exact blue becomes red; all other colors remain unchanged.",
@@ -118,10 +123,10 @@ def main():
         },
         "scope": "Exploratory diagnostics beyond the original training distribution; not a new benchmark.",
     }
-    OUTPUT.mkdir(parents=True, exist_ok=True)
-    save_color_preview(cases)
-    save_shape_preview(original, prediction, rule, target)
-    (OUTPUT / "report.json").write_text(
+    output.mkdir(parents=True, exist_ok=True)
+    save_color_preview(cases, output)
+    save_shape_preview(original, prediction, rule, target, output)
+    (output / "report.json").write_text(
         json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8",
     )
     for seen, label in ((True, "Training colors"), (False, "New colors")):
@@ -130,7 +135,7 @@ def main():
         print(f"{label}: {correct}/{len(subset)} exact under the stated diagnostic contract.")
     for name, scores in shape_scores.items():
         print(f"Blue-circle/blue-square probe, {name}: edit accuracy={scores['edit_pixel_accuracy']:.2%}; background preservation={scores['background_preservation']:.2%}")
-    print(f"Report and previews: {OUTPUT}")
+    print(f"Report and previews: {output}")
 
 
 if __name__ == "__main__":

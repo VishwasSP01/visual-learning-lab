@@ -40,6 +40,26 @@ Datasets and checkpoints remain in the ignored `data/` and `results/` folders.
 See [the refactor verification](docs/repository_structure.md) for compatibility
 with the recorded experiment and its original source hashes.
 
+## Run an experiment from one config
+
+After generating the spatial dataset described below, train with:
+
+```bash
+uv run --locked python scripts/run_experiment.py --config configs/shape_cnn_v1.json
+```
+
+The config specifies the data, seed, training settings, device, and output path.
+Add `--dry-run` to validate and display those settings without training or writing
+files. Seven configs cover the existing training, baseline, and analysis pipelines.
+Their outputs go to `results/reproductions/`; the runner refuses to reuse an
+existing output directory. The original commands below remain available.
+
+New reports record the Git revision and dirty status, effective settings, training
+seed, config contents and hash, and source/dependency-file hashes. Deterministic
+evaluation records `seed: null` with an explanation. Historical benchmark reports
+remain unchanged. See [the experiment guide](docs/experiment_configs.md) for
+prerequisites, commands, and the distinction between reproduction and new evidence.
+
 ## First milestone: build the data
 
 Our first task is deliberately simple:

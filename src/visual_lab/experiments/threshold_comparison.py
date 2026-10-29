@@ -12,7 +12,7 @@ from PIL import Image, ImageDraw
 from visual_lab.metrics import spatial_counts, summarize_spatial
 from visual_lab.models import ShapeEditor
 from visual_lab.paths import ROOT
-from visual_lab.provenance import source_hashes
+from visual_lab.provenance import run_metadata
 from visual_lab.rendering import render_edit
 from visual_lab.thresholds import THRESHOLDS, SELECTION_RULE, apply_threshold, select_candidate
 
@@ -34,12 +34,15 @@ def save_preview(indices, records, images, logits, threshold, output):
     sheet.save(output)
 
 
-def main():
+def main(argv=None, *, run_context=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--data-dir", type=Path, default=ROOT / "data/shape_edits_v1")
     parser.add_argument("--run-dir", type=Path, default=ROOT / "results/spatial_cnn")
-    args = parser.parse_args()
-    output = args.run_dir / "threshold_sweep"
+    parser.add_argument("--output-dir", type=Path)
+    args = parser.parse_args(argv)
+    args.output_dir = args.output_dir or args.run_dir / "threshold_sweep"
+    metadata = run_metadata(args, configuration=run_context)
+    output = args.output_dir
     reference_bytes = (args.run_dir / "validation.json").read_bytes()
     reference = json.loads(reference_bytes)
     if reference["split"] != "validation" or reference["dataset"] != "shape_edits_v1":
@@ -120,7 +123,7 @@ def main():
         "lost_exactness": sum(a["exact"] and not b["exact"] for a, b in zip(baseline_cases, selected_cases, strict=True)),
     }
     report = {
-        "source_files_sha256": source_hashes(),
+        **metadata,
         "experiment": "shape_cnn_v1_threshold_sweep", "dataset": "shape_edits_v1",
         "split": "validation", "images": len(records), "threshold_grid": list(THRESHOLDS),
         "selection_rule": SELECTION_RULE, "selected_threshold": selected_threshold,

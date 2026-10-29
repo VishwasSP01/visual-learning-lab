@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "experiment": "shape_cnn_v1_thresholds",
+  "command": "compare_thresholds",
+  "parameters": {
+    "data_dir": "data/shape_edits_v1",
+    "run_dir": "results/spatial_cnn",
+    "output_dir": "results/reproductions/shape_cnn_v1_thresholds"
+  }
+}

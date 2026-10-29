@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "experiment": "pixel_diagnostics",
+  "command": "inspect_pixel_model",
+  "parameters": {
+    "run_dir": "results/pixel_mlp",
+    "output_dir": "results/reproductions/pixel_diagnostics"
+  }
+}

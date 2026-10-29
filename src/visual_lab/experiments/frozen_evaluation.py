@@ -13,7 +13,7 @@ from visual_lab.baselines import recolor_blue
 from visual_lab.metrics import spatial_counts, summarize_spatial
 from visual_lab.models import ShapeEditor
 from visual_lab.paths import ROOT
-from visual_lab.provenance import source_hashes
+from visual_lab.provenance import run_metadata
 from visual_lab.rendering import render_edit
 from visual_lab.thresholds import apply_threshold
 
@@ -47,13 +47,16 @@ def save_preview(examples, threshold, output):
     sheet.save(output)
 
 
-def main():
+def main(argv=None, *, run_context=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--data-dir", type=Path, default=ROOT / "data/shape_edits_v1")
     parser.add_argument("--run-dir", type=Path, default=ROOT / "results/spatial_cnn")
     parser.add_argument("--config", type=Path,
                         default=ROOT / "docs/experiments/shape_cnn_v1_selected_config.json")
-    args = parser.parse_args()
+    parser.add_argument("--output-dir", type=Path)
+    args = parser.parse_args(argv)
+    args.output_dir = args.output_dir or args.run_dir / "frozen_test"
+    metadata = run_metadata(args, configuration=run_context)
     config_bytes = args.config.read_bytes()
     config = json.loads(config_bytes)
     manifest = (args.data_dir / "manifest.jsonl").read_bytes()
@@ -111,7 +114,7 @@ def main():
     if checkpoint_path.read_bytes() != checkpoint_bytes or args.config.read_bytes() != config_bytes:
         raise ValueError("Frozen model or configuration changed during evaluation.")
     report = {
-        "source_files_sha256": source_hashes(),
+        **metadata,
         "experiment": "shape_cnn_v1_frozen_test", "dataset": "shape_edits_v1",
         "split": "test", "images": len(records), "mask_probability_threshold": threshold,
         "checkpoint_sha256": config["checkpoint_sha256"],
@@ -125,7 +128,7 @@ def main():
         "methods": {method: summarize_spatial(counts) for method, counts in totals.items()},
         "scope": "Held-out model-performance evaluation within a synthetic rendering process; no real-image or arbitrary-instruction claim.",
     }
-    output = args.run_dir / "frozen_test"
+    output = args.output_dir
     output.mkdir(parents=True, exist_ok=True)
     (output / "report.json").write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     (output / "cases.jsonl").write_text("".join(json.dumps(case, sort_keys=True) + "\n" for case in cases), encoding="utf-8")

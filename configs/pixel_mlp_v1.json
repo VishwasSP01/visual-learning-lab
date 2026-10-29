@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "experiment": "pixel_mlp_v1",
+  "command": "train_pixel_model",
+  "parameters": {
+    "epochs": 10,
+    "batch_size": 64,
+    "learning_rate": 0.01,
+    "device": "auto",
+    "seed": 42,
+    "data_dir": "data/circle_edits_v2",
+    "output_dir": "results/reproductions/pixel_mlp_v1"
+  }
+}

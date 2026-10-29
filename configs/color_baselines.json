@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "experiment": "color_baselines",
+  "command": "evaluate_baseline",
+  "parameters": {
+    "data_dir": "data/circle_edits_v2",
+    "split": "validation",
+    "output_dir": "results/reproductions/color_baselines"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "experiment": "shape_cnn_v1_frozen_test",
+  "command": "evaluate_frozen_model",
+  "parameters": {
+    "data_dir": "data/shape_edits_v1",
+    "run_dir": "results/spatial_cnn",
+    "config": "docs/experiments/shape_cnn_v1_selected_config.json",
+    "output_dir": "results/reproductions/shape_cnn_v1_frozen_test"
+  }
+}
