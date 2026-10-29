@@ -1,0 +1,201 @@
+{
+  "audit": {
+    "cross_split_input_overlap": 0,
+    "independent_checks": "NumPy comparison of every saved target, both shape masks, RGB regions, geometry, per-scene pairing, split membership, and pixel hashes.",
+    "input_pixel_hash_overlap_with_previous_dataset": 0,
+    "model_training_performed": false,
+    "new_test_model_performance_measured": false,
+    "png_files": 16251,
+    "png_paths_and_bytes_sha256": "cb5ab4e8704d0933f0c37b80d2810b1ba255909367c991c7ab2fff17d983804d",
+    "previous_dataset": "shape_edits_v1",
+    "previous_manifest_sha256": "4b5610a59ba04d7ab3894d5165d5341ac9acee0a61df4a4c746695fb80a338cb",
+    "previous_scenes": 6500,
+    "request_counts": {
+      "test": 1000,
+      "train": 5000,
+      "validation": 500
+    },
+    "requests_per_scene": 2,
+    "scene_counts": {
+      "test": 500,
+      "train": 2500,
+      "validation": 250
+    },
+    "serialized_request_checks_passed": 6500,
+    "unique_input_pixel_hashes": 3250
+  },
+  "construction": {
+    "configuration": null,
+    "dataset": "instruction_edits_v1",
+    "effective_parameters": {
+      "output": "/Users/vishwas/Documents/GPT/visual-learning-lab/data/instruction_edits_v1",
+      "scenes_per_split": {
+        "test": 500,
+        "train": 2500,
+        "validation": 250
+      },
+      "seed": 20261029
+    },
+    "environment_files_sha256": {
+      "pyproject.toml": "576aebbefc2c0568c19a081c16cb37b8d3cd24038ab163ba1a593a631fa5113e",
+      "uv.lock": "e98b8070360c9cc1d80c50011865c2c821b6e203cb2c1920cb52907fe0d67ce7"
+    },
+    "git_commit": "8c59a8923c606b1733f02cadb60f4159703189f9",
+    "git_dirty": false,
+    "input_reuse": "Exactly two requests share one scene input; no input pixel hash belongs to different scenes.",
+    "label_policy": "Targets, masks, and geometry are supervision/audit labels, never model inputs.",
+    "manifest_sha256": "3c91db2c02b2caca1dbca8a3ec5cf78dd34c72bb092a36988bda94e561756ddc",
+    "model_inputs": "RGB image and categorical instruction ID (0=circle, 1=square).",
+    "preview_splits": [
+      "train",
+      "validation"
+    ],
+    "requests_per_split": {
+      "test": 1000,
+      "train": 5000,
+      "validation": 500
+    },
+    "scenes_per_split": {
+      "test": 500,
+      "train": 2500,
+      "validation": 250
+    },
+    "schema_version": 1,
+    "scope": "Two fixed commands on the same synthetic renderer; no free-form language or real-photo claim.",
+    "seed": 20261029,
+    "seed_role": "Dataset generation; independent RNG stream per split (seed + split index).",
+    "size": 64,
+    "source_files_sha256": {
+      "scripts/analyze_spatial_errors.py": "4797c3bd8b260e0f0ab792dc90527d61df7239ded02da1c7b9a450e70ce03b3a",
+      "scripts/compare_thresholds.py": "cfc44add99499ac2e59ef6179fab878939c69f82f6fda00644347b2bab227a90",
+      "scripts/demo.py": "306b2d5e29509bd2ff6a7852992a47ea2db6d6ad731a8238ee8644523a9638d4",
+      "scripts/draw_circle.py": "5186b979fa89d3a55247cd8d0a5ac2f5a34183af221b16a60ad4eea7379498ad",
+      "scripts/evaluate_baseline.py": "b39fd08c7bba802a21329c49e39890cac1e74194fcf05dde9f6de2c4c2885175",
+      "scripts/evaluate_frozen_model.py": "8582369713e45ef33d86fa24cd4480155f4de454d58143a54d3890671b54af30",
+      "scripts/generate_instruction_pairs.py": "057bd6c696a744edd14b50e6900ace2d28f66825b9ae6289a88f4692c5138c37",
+      "scripts/generate_pairs.py": "7915f0336b508dff8df311546ea95fa85a7aa040d59de6c2d8eb525977f1e2b7",
+      "scripts/generate_spatial_pairs.py": "03baf68cf53860e5b6d4f285a079d35aaec588efb406e0267756dab1ea336a15",
+      "scripts/inspect_pixel_model.py": "d7febe85cce373708ca9e52c41dd6e327223f92b421c741857e63fba412031bd",
+      "scripts/run_experiment.py": "3fb64e464d7ef9717c4af5ae6f3f0295b221bc96d5209a54811f75d0c272b18f",
+      "scripts/train_pixel_model.py": "fd1003031855c597a937f1f28167d53762712ab25784a36f31254fad86bc08e0",
+      "scripts/train_spatial_model.py": "f1b2e638a025d5d03d12c680993504b1c2639febe4a68242139ffe2d1f6b6a3a",
+      "src/visual_lab/__init__.py": "ea4f500db5c6e18e2031a98aa818c98418fa257f7db6307dde6dccbdfd222354",
+      "src/visual_lab/baselines.py": "1745b904a9d85de0b9fbdc890e13e2cec946e6c0d36ba5f8f01939f0c9e5b0da",
+      "src/visual_lab/data/__init__.py": "5bdb73e95ac9723b8b7a5b2ceba2dc7b10620e99a910134e28de40ede7b40156",
+      "src/visual_lab/data/circle_pairs.py": "d7416618313bc9070b041a381503f730e1b63487819598520148c44b74475c9e",
+      "src/visual_lab/data/instruction_pairs.py": "400665cb49e6665db1a3170c7ee99cd84df8ddd5656b3f7510bdc855b5ad131a",
+      "src/visual_lab/data/loaders.py": "e0e647565b3120b727f1d10d9c8780381be36ff176f7d5fa713e9612684dae41",
+      "src/visual_lab/data/spatial_pairs.py": "af3fa6b3a71fbc84b4c0f842b49e41fe395bbee757f6489027e33238ad6aa4a7",
+      "src/visual_lab/demo/__init__.py": "aef3c9ee7b67fe8ea8e9fa5f1cf1030fded611661de0f3741f3aec9bcafd7b41",
+      "src/visual_lab/demo/app.py": "e66a1e54369371444f786f155ea8cbe6bbd36fdfbb3211ce7bb3500a5c1603b6",
+      "src/visual_lab/demo/index.html": "65203a6f2456bd6a42e1bfdda63cdbef13936456ede1b70b626fbc65497b744e",
+      "src/visual_lab/experiments/__init__.py": "e3908412bf3d93cf8d96a59c08d33d2f30efa5fe9ee254b15357cc8140c05e87",
+      "src/visual_lab/experiments/baseline_evaluation.py": "253c4ecf14b5f4684c9eab2ef8ce439d55be31fd31a710f6ffbdd224595b513f",
+      "src/visual_lab/experiments/frozen_evaluation.py": "ad99b0702a3748b9722be55cf2dda127420c8ec7bdd455cfa969c7498324f5b0",
+      "src/visual_lab/experiments/pixel_diagnostics.py": "4892a80331ea2f9109a0b060f9868b37bbf32560da8e7381bbd2cca01a12cd0b",
+      "src/visual_lab/experiments/pixel_training.py": "410d7adefedc50e51cefeeb3b95f009a3a4373bf25a6dcc6088916655d3f0a07",
+      "src/visual_lab/experiments/spatial_errors.py": "c9bfce8fcec20b72704c4c64bbbd8de999aa293eabf1473d83e45f493031fb6c",
+      "src/visual_lab/experiments/spatial_training.py": "111e190848d4efcd5076750616b27aa8749d1cd6fad707f406c35eb8d544bdd5",
+      "src/visual_lab/experiments/threshold_comparison.py": "43b041ae060631b7e911408c09a75aa522d348763541c79d18f0cb009f55eff6",
+      "src/visual_lab/geometry.py": "24ef42cbcfa966b72dd6984bea4076adc3ad15c4147230cf7c936300288e2647",
+      "src/visual_lab/metrics.py": "56c63e6ee5b6171dbb21b8a21181253e3206295b38db7a23902f3a49e04992c1",
+      "src/visual_lab/models.py": "9e4a7b6e49ae34e56057b34a742c3f1c51e7bb2f1ca06bf29768317c0824358c",
+      "src/visual_lab/paths.py": "92b46f0e56a53803571d8f228f1185f1bc7591682b2e85daca2277f62bc2b9e8",
+      "src/visual_lab/provenance.py": "8a33ceabf4ccec718867cd3f129928f8e3ea52287a3c7dc911f2bfda817cd8ac",
+      "src/visual_lab/rendering.py": "112ecff247369c0517343bc9e4e43f0e43b03b1e278c4f93dd882d1a6224ba8e",
+      "src/visual_lab/runner.py": "c560321f9447600c125885c98094cff39ba7cb4adc8db39ff7fba168c5150637",
+      "src/visual_lab/thresholds.py": "f2c15c19e142f7a9a7fbc78286de282341385af2a020d1fe40dd9c137725f94a"
+    },
+    "split_policy": "Assign scenes to spatial splits first; both instructions remain with their scene.",
+    "tasks": [
+      {
+        "id": 0,
+        "instruction": "Change the blue circle to red. Keep the blue square and background unchanged.",
+        "object": "circle",
+        "preserve": "square"
+      },
+      {
+        "id": 1,
+        "instruction": "Change the blue square to red. Keep the blue circle and background unchanged.",
+        "object": "square",
+        "preserve": "circle"
+      }
+    ],
+    "test_model_performance_measured": false,
+    "tiles": {
+      "test": [
+        [
+          0,
+          0
+        ],
+        [
+          3,
+          3
+        ]
+      ],
+      "train": [
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          2
+        ]
+      ],
+      "validation": [
+        [
+          0,
+          3
+        ],
+        [
+          3,
+          0
+        ]
+      ]
+    },
+    "total_requests": 6500,
+    "total_scenes": 3250,
+    "training_performed": false
+  }
+}

@@ -459,6 +459,8 @@ uv run --locked python scripts/generate_instruction_pairs.py
 
 See [the instruction data contract](docs/instruction_conditioning.md) for scene
 grouping, categorical instruction IDs, label rules, and the paired-scene metric.
+The [recorded construction audit](docs/experiments/instruction_edits_v1_data.json)
+verifies all 6,500 requests and zero input overlap with the previous spatial dataset.
 Larger generative models are later experiments.
 
 The original `scripts/draw_circle.py`, `blue_circle.png`, and `red_circle.png` are kept

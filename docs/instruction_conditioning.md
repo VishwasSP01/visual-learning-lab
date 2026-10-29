@@ -78,6 +78,25 @@ contains only the first training and validation scene, each shown under both
 instructions. Test files receive construction-integrity checks but no preview
 or model-performance evaluation.
 
+## Recorded construction audit
+
+The full dataset was generated from clean revision
+[`8c59a89`](https://github.com/VishwasSP01/visual-learning-lab/commit/8c59a8923c606b1733f02cadb60f4159703189f9).
+An independent NumPy audit of all 6,500 saved requests confirmed the requested
+recoloring, preservation, mask separation, geometry, input hashes, and pairing.
+There are 3,250 distinct input pixel hashes, with zero reuse between splits and
+zero overlap with the previous `shape_edits_v1` dataset's 6,500 scenes.
+
+See the [construction metadata and audit counts](experiments/instruction_edits_v1_data.json).
+The report fingerprints the new manifest, all PNG paths/bytes, and the previous
+manifest used for the overlap comparison. Model training and new-test
+performance evaluation have not been performed.
+
+The rows below show renderer-produced targets and supervision masks before
+training. Each scene appears under both requests; test scenes are omitted.
+
+![Training and validation scenes under circle and square instructions](assets/instruction_pairs_preview.png)
+
 ## Next learning milestone
 
 Once this data audit is recorded, build a small CNN that receives an image and
