@@ -28,6 +28,7 @@ non-finite numbers, invalid seeds, and nonpositive training settings.
 | `configs/semantic_dilated_v1.json` | Joint 3-class dilated segmenter | Instruction dataset and saved validation-selected v2 reference |
 | `configs/semantic_lite_ce_v1.json` | Small encoder/decoder with balanced cross entropy | Same dataset and reference |
 | `configs/semantic_lite_dice_v1.json` | Same small model, adding foreground Dice loss | Same dataset and reference |
+| `configs/semantic_dilated_v1_seed_7.json`, `configs/semantic_dilated_v1_seed_2026.json` | Repeat the selected semantic recipe under two additional seeds | Same dataset and reference |
 | `configs/pixel_diagnostics.json` | Saved PixelMLP probes | `results/pixel_mlp/model.pt` |
 | `configs/shape_cnn_v1_errors.json` | Frozen CNN validation error analysis | Original spatial checkpoint, validation report, and dataset |
 | `configs/shape_cnn_v1_thresholds.json` | Declared validation threshold grid | Original spatial checkpoint, validation report, and dataset |

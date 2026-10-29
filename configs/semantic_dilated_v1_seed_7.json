@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "experiment": "semantic_dilated_v1_seed_7",
+  "command": "train_semantic_model",
+  "parameters": {
+    "epochs": 40,
+    "batch_size": 64,
+    "learning_rate": 0.001,
+    "device": "auto",
+    "seed": 7,
+    "data_dir": "data/instruction_edits_v1",
+    "output_dir": "results/reproductions/semantic_dilated_v1_seed_7",
+    "architecture": "dilated",
+    "dice_weight": 0,
+    "manifest_sha256": "3c91db2c02b2caca1dbca8a3ec5cf78dd34c72bb092a36988bda94e561756ddc",
+    "reference_run_dir": "results/reproductions/instruction_cnn_v2",
+    "reference_config": "docs/experiments/instruction_cnn_v2_selected_config.json"
+  }
+}

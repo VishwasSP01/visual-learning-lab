@@ -93,3 +93,34 @@ a later frozen evaluation before claims about new-scene generalization.
 - Implementation uses the installed PyTorch 2.15.0 reference docstrings for
   `Conv2d(groups=...)`, `cross_entropy`, `interpolate`, and `one_hot`. No new
   dependency is introduced.
+
+## Initial three-model result and replication selection
+
+All three seed-42 runs used clean revision
+[`6ccf34e`](https://github.com/VishwasSP01/visual-learning-lab/commit/6ccf34edeabdf0ea9b96a116e04ab3037fd0abcc).
+They evaluated the same validation inputs and labels; each reproduces the
+reference's 311 exact requests and 103 exact scene pairs at its saved cutoff.
+
+| Model | Selected epoch | Exact requests / 500 | Exact scene pairs / 250 | Wrong pixels |
+| --- | ---: | ---: | ---: | ---: |
+| Historical binary reference, cutoff 0.95 | 24 | 311 (62.2%) | 103 (41.2%) | 1,216 |
+| **Joint dilated, balanced CE** | **39** | **472 (94.4%)** | **230 (92.0%)** | **104** |
+| Small encoder/decoder, balanced CE | 40 | 395 (79.0%) | 154 (61.6%) | 285 |
+| Same small model, CE + 0.5 Dice | 40 | 420 (84.0%) | 180 (72.0%) | 338 |
+
+Dice improves exact outputs for the small model but increases total wrong pixels.
+The small-model initial state hashes match, verifying equal initialization.
+The declared ranking selects **the joint dilated model**. Its recipe is now
+repeated with seeds 7 and 2026 in committed configs, without changing settings.
+
+The depthwise encoder/decoder uses only 6.77 million convolution MACs per scene,
+versus 30.28 million for the joint dilated model. Nevertheless, measured CPU
+single-request medians are roughly 3.9 ms versus 0.58 ms. Operator overhead and
+backend behavior matter; fewer MACs are insufficient evidence of lower latency.
+The dilated model's initial timing is slightly slower for one request than the
+reference (0.58 vs 0.53 ms), but faster for both requests on one scene
+(0.58 vs 0.94 ms). These are local measurements with the protocol above.
+
+Reports: [joint dilated](experiments/semantic_dilated_v1_validation.json),
+[small CE](experiments/semantic_lite_ce_v1_validation.json),
+[small CE + Dice](experiments/semantic_lite_dice_v1_validation.json).
