@@ -124,3 +124,29 @@ reference (0.58 vs 0.53 ms), but faster for both requests on one scene
 Reports: [joint dilated](experiments/semantic_dilated_v1_validation.json),
 [small CE](experiments/semantic_lite_ce_v1_validation.json),
 [small CE + Dice](experiments/semantic_lite_dice_v1_validation.json).
+
+## Seed sensitivity and a declared longer budget
+
+The two repeat runs from clean revision
+[`7648508`](https://github.com/VishwasSP01/visual-learning-lab/commit/764850894b0e57159f7a875c06cce098738d8470)
+expose substantial instability at 40 epochs:
+
+| Seed | Selected epoch | Exact requests / 500 | Exact pairs / 250 | Wrong pixels |
+| --- | ---: | ---: | ---: | ---: |
+| 42 | 39 | 472 (94.4%) | 230 (92.0%) | 104 |
+| 7 | 40 | 428 (85.6%) | 201 (80.4%) | 310 |
+| 2026 | 38 | 328 (65.6%) | 101 (40.4%) | 488 |
+
+Seed 2026 even slightly trails the historical reference on paired-scene success
+(101 vs 103). Lower validation loss alone does not guarantee more exact edits.
+The seed-42 headline therefore does not establish a stable improvement.
+All results are retained: [seed 7](experiments/semantic_dilated_v1_seed_7_validation.json)
+and [seed 2026](experiments/semantic_dilated_v1_seed_2026_validation.json).
+
+Training losses are still falling at epoch 40 for all three seeds; the selected
+epochs are close to the budget limit. Before running another comparison, the
+`semantic_dilated_v2` configs extend **all three seeds to 100 epochs from
+scratch**, keeping architecture, loss, optimizer, learning rate, batch size,
+dataset, decoder, and checkpoint-selection rule unchanged. We do not switch
+recipes based on the repeats or discard the weak seed. This is a validation-led
+budget change with preserved earlier results; the test remains reserved.
