@@ -118,11 +118,15 @@ def convolution_macs(model, *inputs):
 
 
 @torch.inference_mode()
-def benchmark(model, reference, image, threshold, warmups=10, repeats=100):
+def benchmark(model, reference, image, threshold, warmups=10, repeats=100, decoder="argmax"):
     """Interleave CPU timings; normalized inputs ready, both models in eval mode."""
     ids = torch.tensor([0, 1])
     paired_images = image.repeat(2, 1, 1, 1)
     def semantic(single):
+        if decoder == "comparisons":
+            from visual_lab.semantic_decoding import semantic_object_masks
+            masks = semantic_object_masks(model(image))
+            return masks[:, 0] if single else masks.permute(1, 0, 2, 3)
         classes = model(image).argmax(dim=1)
         return classes == 1 if single else torch.stack((classes == 1, classes == 2))
     def baseline(single):
@@ -145,6 +149,7 @@ def benchmark(model, reference, image, threshold, warmups=10, repeats=100):
     return {
         "device": "cpu", "threads": torch.get_num_threads(), "machine": platform.machine(),
         "platform": platform.platform(), "warmups_per_operation": warmups, "repeats_per_operation": repeats,
+        "semantic_decoder": decoder,
         "timings_ms": {key: {"median": float(np.median(values)), "p90": float(np.percentile(values, 90))}
                        for key, values in samples.items()},
         "scope": "Model plus class/threshold decoding on normalized 64x64 tensors; excludes file I/O, input normalization, RGB rendering. Pair reuses one semantic pass; reference batches both requests.",

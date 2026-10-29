@@ -14,6 +14,14 @@ The preview shows the first four test examples, rather than examples selected
 for their results. See the [test protocol and limitations](docs/test_evaluation.md)
 and [recorded counts](docs/experiments/shape_cnn_v1_test.json).
 
+**Latest instruction experiment — validation only:** a shared three-class
+perception model plus categorical object selection gets **491/500 edits exact
+(98.2%)** and **244/250 scenes with both edits exact (97.6%)**, versus 311 and
+103 for the previous instruction model. Across three training seeds, exact-edit
+accuracy ranges from **94.8% to 98.2%**. The new model has **7,459 parameters**;
+the instruction test set remains reserved. See the [comparison, seed checks,
+efficiency measurements, and remaining failures](docs/semantic_editor.md).
+
 A laptop-first project exploring neural networks, diffusion models, and reliable
 image editing through reproducible experiments.
 
@@ -68,7 +76,7 @@ for prerequisites, a fresh-training route, and how to stop the local server.
 src/visual_lab/
   data/          # Synthetic generators and supervised split loaders
   experiments/   # Training, evaluation, and analysis pipelines
-  models.py      # PixelMLP and ShapeEditor architectures
+  models.py      # Pixel, binary-mask, and joint semantic architectures
   metrics.py     # Exact-image, edit, and preservation measurements
   rendering.py   # Fixed mask renderer and RGB conversion
 scripts/         # Thin commands that call the package
@@ -474,6 +482,13 @@ edits correct rise to **103 / 250 (41.2%)**. Wrong pixels fall from 4,677 to 1,2
 although 20 requests lose exactness as the higher cutoff misses more intended
 edits. This remains an imperfect synthetic editor. These are validation results;
 the new test set remains reserved. Larger generative models are later experiments.
+
+The [joint semantic-model comparison](docs/semantic_editor.md) then tests shared
+object classification, a small encoder/decoder, separable convolutions, and an
+overlap-loss ablation. The simpler dilated segmenter performs best among those
+candidates. Extending the fixed recipe from 40 to 100 epochs across three seeds
+raises validation exact-edit accuracy to 94.8–98.2%, with all earlier results
+retained. The original local demo still runs the original circle-only model.
 
 The original `scripts/draw_circle.py`, `blue_circle.png`, and `red_circle.png` are kept
 as the first hand-created examples.

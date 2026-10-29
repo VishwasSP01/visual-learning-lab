@@ -1,0 +1,15 @@
+{
+  "architecture": "dilated",
+  "checkpoint_sha256": "e114687642887e771d69684b9723ae19ffdf7200cedafc202a99de483894e90d",
+  "class_mapping": {
+    "background": 0,
+    "circle": 1,
+    "square": 2
+  },
+  "dataset": "instruction_edits_v1",
+  "decoder": "three_class_argmax",
+  "manifest_sha256": "3c91db2c02b2caca1dbca8a3ec5cf78dd34c72bb092a36988bda94e561756ddc",
+  "model": "SemanticDilatedEditor",
+  "selected_on": "validation",
+  "test_model_performance_measured": false
+}

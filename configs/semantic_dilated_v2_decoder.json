@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "experiment": "semantic_dilated_v2_decoder",
+  "command": "benchmark_semantic_decoder",
+  "parameters": {
+    "data_dir": "data/instruction_edits_v1",
+    "run_dir": "results/reproductions/semantic_dilated_v2",
+    "reference_run_dir": "results/reproductions/instruction_cnn_v2",
+    "reference_config": "docs/experiments/instruction_cnn_v2_selected_config.json",
+    "output_dir": "results/reproductions/semantic_dilated_v2_decoder"
+  }
+}

@@ -20,9 +20,22 @@ from visual_lab.experiments.semantic_training import (
 )
 from visual_lab.runner import load_configuration, main
 from visual_lab.paths import ROOT
+from visual_lab.semantic_decoding import semantic_object_masks
 
 
 class SemanticChecks(unittest.TestCase):
+    def test_fast_decoder_matches_argmax_including_every_three_way_tie_pattern(self):
+        import itertools
+        values = list(itertools.product((-1., 0., 1.), repeat=3))
+        logits = torch.tensor(values).T.reshape(1, 3, 3, 9)
+        classes = logits.argmax(1)
+        expected = torch.stack((classes == 1, classes == 2), dim=1)
+        torch.testing.assert_close(semantic_object_masks(logits), expected)
+        random = torch.randn(4, 3, 16, 17)
+        classes = random.argmax(1)
+        torch.testing.assert_close(semantic_object_masks(random), torch.stack((classes == 1, classes == 2), dim=1))
+        with self.assertRaises(ValueError):semantic_object_masks(torch.zeros(1, 2, 4, 4))
+
     def test_architectures_preserve_resolution_and_learn_all_classes(self):
         torch.set_num_threads(2)
         for name, constructor in MODELS.items():
@@ -123,3 +136,14 @@ class SemanticChecks(unittest.TestCase):
                 self.assertFalse(report["test_images_loaded"])
                 self.assertFalse((data_dir / "test").exists())
                 self.assertEqual(report["training_class_counts"], torch.bincount(collapse_scenes(load_instruction_split(data_dir, records, "train"))[1].flatten().long(), minlength=3).tolist())
+            benchmark_output = root / "benchmark"
+            config = {"schema_version": 1, "experiment": "decoder_fixture", "command": "benchmark_semantic_decoder",
+                      "parameters": {"data_dir": str(data_dir), "run_dir": str(root / "dilated"),
+                                     "reference_run_dir": str(reference), "reference_config": str(selected),
+                                     "output_dir": str(benchmark_output)}}
+            path.write_text(json.dumps(config))
+            with contextlib.redirect_stdout(io.StringIO()):main(["--config", str(path)])
+            benchmark_report = json.loads((benchmark_output / "report.json").read_text())
+            self.assertEqual(benchmark_report["equivalent_request_masks"], 4)
+            self.assertEqual(benchmark_report["equivalent_scene_predictions"], 2)
+            self.assertFalse(benchmark_report["test_images_loaded"])

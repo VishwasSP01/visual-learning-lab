@@ -33,6 +33,9 @@ COMMANDS = {
     "analyze_spatial_errors": ("spatial_errors", SPATIAL_ANALYSIS),
     "compare_thresholds": ("threshold_comparison", SPATIAL_ANALYSIS),
     "compare_instruction_thresholds": ("instruction_thresholds", SPATIAL_ANALYSIS),
+    "benchmark_semantic_decoder": ("semantic_benchmark", {
+        **SPATIAL_ANALYSIS, "reference_run_dir": Path, "reference_config": Path,
+    }),
     "evaluate_frozen_model": ("frozen_evaluation", {**SPATIAL_ANALYSIS, "config": Path}),
 }
 

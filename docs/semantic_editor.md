@@ -150,3 +150,75 @@ scratch**, keeping architecture, loss, optimizer, learning rate, batch size,
 dataset, decoder, and checkpoint-selection rule unchanged. We do not switch
 recipes based on the repeats or discard the weak seed. This is a validation-led
 budget change with preserved earlier results; the test remains reserved.
+
+## Recorded 100-epoch results
+
+All three longer runs started from clean revision
+[`7664c7c`](https://github.com/VishwasSP01/visual-learning-lab/commit/7664c7cebe74ea86090b93894f1ec081ad736635).
+
+| Seed | Selected epoch | Exact requests / 500 | Exact pairs / 250 | Wrong pixels |
+| --- | ---: | ---: | ---: | ---: |
+| **42** | **100** | **491 (98.2%)** | **244 (97.6%)** | **20** |
+| 7 | 99 | 474 (94.8%) | 231 (92.4%) | 86 |
+| 2026 | 99 | 478 (95.6%) | 234 (93.6%) | 36 |
+
+The arithmetic mean across these three training seeds is 96.2% exact requests
+and about 94.5% exact scene pairs. All use the same validation scenes, so this
+is seed sensitivity rather than three independent data evaluations. MPS
+numerics can vary across environments. The weak 40-epoch run remains published.
+
+Keep seed 42 as the primary recorded model, continuing the original discovery
+seed rather than selecting a new seed from the repeats. It has 245/250 exact
+circle requests and 246/250 exact square requests. Relative to the historical
+reference, 180 requests and 141 scene pairs become exact, with no regressions
+on this validation set. Its remaining 20 wrong pixels comprise 9 missed intended
+edits, 8 unwanted opposite-object edits, and 3 unwanted white-background edits.
+The other seeds do have regressions against the reference: seed 7 loses 4 exact
+requests and 2 exact pairs; seed 2026 loses 2 requests and 1 pair.
+
+The model has 7,459 parameters versus 8,009 for the binary reference (6.9% fewer).
+Convolution MACs fall from 32.51M to 30.28M for one request, and from 65.01M to
+30.28M for both requests on one scene (53.4% fewer). Its saved checkpoint is
+33,445 bytes; checkpoints are excluded from Git. These inference savings come
+with a larger training budget than the original reference; we do not claim
+lower training cost or an architecture-only causal improvement.
+
+Reports: [seed 42](experiments/semantic_dilated_v2_validation.json),
+[seed 7](experiments/semantic_dilated_v2_seed_7_validation.json),
+[seed 2026](experiments/semantic_dilated_v2_seed_2026_validation.json), and the
+[seed-42 selected configuration](experiments/semantic_dilated_v2_selected_config.json).
+An independent NumPy evaluation reloaded all **eight** saved semantic checkpoints
+(the initial three, two short repeats, and three longer runs) with inference
+batch size 37. It reproduced every aggregate and per-task raw metric count and
+exact-scene count, including the reference, using no project loader, renderer,
+or metric implementation. Only validation image files were read.
+
+The first two validation scenes under both requests, kept in manifest order:
+
+![First four requests with historical and new predictions](assets/semantic_dilated_v2_preview.png)
+
+The four worst requests under the seed-42 semantic model, sorted by wrong-pixel
+count and then request ID, show the remaining close-object and edge errors:
+
+![Worst four semantic-model requests](assets/semantic_dilated_v2_worst.png)
+
+## Equivalent decoder optimization protocol
+
+The initial benchmark uses a full 3-class `argmax` followed by object selection.
+For two known objects we can compare channels directly: circle wins when its
+score exceeds background and is at least square; square wins when its score
+exceeds both. This preserves the lowest-class-index tie rule of `argmax` for
+finite logits. The helper returns both object masks without an intermediate
+integer class map. It uses no labels, geometry, or shape heuristics.
+
+Before timing, verify that both decoders produce identical masks on all 250
+validation scenes / 500 requests at the saved seed-42 weights. Unit tests cover
+every three-way tie pattern using scores -1, 0, and 1, plus random scores.
+Then compare both decoders with the historical reference using the same CPU
+timing protocol above, without changing weights, class decisions, or accuracy
+settings. The finite-output check is performed before timing; the timed fast
+path assumes finite logits.
+
+```bash
+uv run --locked python scripts/run_experiment.py --config configs/semantic_dilated_v2_decoder.json
+```

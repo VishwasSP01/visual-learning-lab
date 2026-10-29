@@ -30,6 +30,7 @@ non-finite numbers, invalid seeds, and nonpositive training settings.
 | `configs/semantic_lite_dice_v1.json` | Same small model, adding foreground Dice loss | Same dataset and reference |
 | `configs/semantic_dilated_v1_seed_7.json`, `configs/semantic_dilated_v1_seed_2026.json` | Repeat the selected semantic recipe under two additional seeds | Same dataset and reference |
 | `configs/semantic_dilated_v2.json`, `configs/semantic_dilated_v2_seed_7.json`, `configs/semantic_dilated_v2_seed_2026.json` | Declared 100-epoch extension of the selected recipe for all three seeds | Same dataset and reference |
+| `configs/semantic_dilated_v2_decoder.json` | Verify equivalent masks and compare CPU decoders | Saved seed-42 v2 semantic model and original instruction reference |
 | `configs/pixel_diagnostics.json` | Saved PixelMLP probes | `results/pixel_mlp/model.pt` |
 | `configs/shape_cnn_v1_errors.json` | Frozen CNN validation error analysis | Original spatial checkpoint, validation report, and dataset |
 | `configs/shape_cnn_v1_thresholds.json` | Declared validation threshold grid | Original spatial checkpoint, validation report, and dataset |
