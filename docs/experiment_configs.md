@@ -78,8 +78,8 @@ commands keep their original overwrite behavior.
   plus `pyproject.toml` and `uv.lock`. Existing data and checkpoint hashes remain.
 
 The two original training configs reproduce their original seed and hyperparameters.
-The instruction config declares a separate paired-task experiment; its mask
-threshold and manifest hash are explicit. See [its protocol](instruction_model.md).
+The instruction configs declare separate 12- and 24-epoch comparisons; their mask
+threshold and manifest hash are explicit. See [the protocol and results](instruction_model.md).
 Exact
 numerics can still vary across devices, operating systems, and GPU kernels.
 Historical reports are not amended with today's commit, which did not produce

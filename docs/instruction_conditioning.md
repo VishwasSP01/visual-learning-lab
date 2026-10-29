@@ -8,7 +8,7 @@ the **exact same input image** appears with two different requests:
 | 0 | Recolor the blue circle red | Blue square and white background |
 | 1 | Recolor the blue square red | Blue circle and white background |
 
-The planned model inputs are RGB pixels and this two-value categorical ID.
+The model inputs are RGB pixels and this two-value categorical ID.
 The text strings make the task readable; choosing between two predefined IDs
 does not establish free-form language understanding. Learned text conditioning
 can be a separate later experiment.
@@ -21,7 +21,7 @@ these balanced pairs it can achieve at most 50% exact-request success and 0%
 success at getting both requests right for a scene. This is a ceiling, not a
 measured model result.
 
-Future evaluation must report both exact-request success and **paired-scene
+Evaluation reports both exact-request success and **paired-scene
 success**: both instructions must produce their complete correct targets.
 Requested-object accuracy and opposite-object/background preservation remain
 separate measurements. A large white background must not hide unwanted edits.
@@ -89,18 +89,20 @@ zero overlap with the previous `shape_edits_v1` dataset's 6,500 scenes.
 
 See the [construction metadata and audit counts](experiments/instruction_edits_v1_data.json).
 The report fingerprints the new manifest, all PNG paths/bytes, and the previous
-manifest used for the overlap comparison. Model training and new-test
-performance evaluation have not been performed.
+manifest used for the overlap comparison. At construction time no model had
+been trained on this dataset. Subsequent validation-only training is documented
+in [the conditioning experiment](instruction_model.md); new-test performance
+has not been measured.
 
 The rows below show renderer-produced targets and supervision masks before
 training. Each scene appears under both requests; test scenes are omitted.
 
 ![Training and validation scenes under circle and square instructions](assets/instruction_pairs_preview.png)
 
-## Next learning milestone
+## Learning progress
 
-Once this data audit is recorded, build a small CNN that receives an image and
-an instruction embedding. First compare instruction-aware and instruction-blind
-behavior on validation data. Select settings there, freeze the configuration,
-then evaluate the newly reserved test set. Keep the original 711 / 1,000 frozen
-benchmark as a separate historical experiment.
+The [first conditioned CNN comparison](instruction_model.md) now records 12- and
+24-epoch runs against a matched instruction-blind control on validation data.
+Its remaining preservation errors need validation analysis before freezing a
+configuration and evaluating the newly reserved test set. The original
+711 / 1,000 frozen benchmark remains a separate historical experiment.

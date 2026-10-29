@@ -112,3 +112,49 @@ uv run --locked python scripts/run_experiment.py --config configs/instruction_cn
 The first two validation scenes under the original 12-epoch model:
 
 ![First validation scene pairs after twelve epochs](assets/instruction_cnn_v1_preview.png)
+
+## Recorded 24-epoch validation result
+
+The longer comparison ran from clean revision
+[`6c7d368`](https://github.com/VishwasSP01/visual-learning-lab/commit/6c7d368bbdcd9d133e59031644d4623ca24ae1e0).
+Both models selected epoch 24 by their own validation loss. The conditioned loss
+reached 0.00810, versus 0.18956 for the constant-ID control. The threshold remained
+0.50; no threshold search or test-image access occurred.
+
+| Validation method | Exact requests / 500 | Both edits exact / 250 scenes |
+| --- | ---: | ---: |
+| Matched instruction-blind model | 0 (0%) | 0 (0%) |
+| **Conditioned model** | **174 (34.8%)** | **9 (3.6%)** |
+| Conditioned model, both IDs clamped to circle | 164 (32.8%) | 0 (0%) |
+| Conditioned model, swapped IDs | 0 (0%) | 0 (0%) |
+
+The effect of conditioning is observable, but reliability remains low. Circle
+requests account for 164 / 250 exact edits; square requests only 10 / 250.
+When editing a square, the model preserves only 90.12% of the circle's pixels.
+The preview shows unwanted red pixels on circles that should stay blue.
+
+Whole-image pixel accuracy is 99.77%, yet only 3.6% of scenes satisfy both edits
+completely. Paired-scene success requires all 8,192 target pixels across both
+requests to match. The reported 99.97% requested-region accuracy therefore does
+not make this a reliable editor. Opposite-object preservation is 95.32% overall.
+
+Both learned embedding rows moved during optimization, and changing IDs changes
+the output on all 250 validation scenes. Swapping the IDs destroys exact-request
+success. The comparison supports a learned dependence on the two task IDs;
+it does not establish general language understanding or robust visual editing.
+
+See the [full 24-epoch report](experiments/instruction_cnn_v2_validation.json),
+including checkpoint hashes, both learning histories, per-task raw counts,
+embedding changes, and config/source provenance. An independent NumPy pixel
+audit after reloading the saved CPU checkpoints reproduced all four methods'
+aggregate, per-instruction, and paired-scene counts for both recorded runs.
+MPS numerics can vary between runs; these are recorded single-seed validation
+comparisons, not evidence of statistical robustness.
+
+The first two validation scenes, retained in manifest order:
+
+![Conditioned and constant-ID predictions after twenty-four epochs](assets/instruction_cnn_v2_preview.png)
+
+The next step is to diagnose the unwanted circle edits during square requests
+and compare validation operating thresholds against paired-scene success.
+The new test set remains reserved until the model and settings are frozen.
