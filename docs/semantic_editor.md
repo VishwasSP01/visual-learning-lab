@@ -222,3 +222,39 @@ path assumes finite logits.
 ```bash
 uv run --locked python scripts/run_experiment.py --config configs/semantic_dilated_v2_decoder.json
 ```
+
+### Recorded decoder and latency result
+
+The comparison ran from clean revision
+[`72d9ed2`](https://github.com/VishwasSP01/visual-learning-lab/commit/72d9ed2c87f1192aae3ec89b17867cabc8059a74).
+The direct-comparison decoder matches **all 500 request masks** exactly.
+It does **not materially improve latency** over argmax in this measured setup:
+single-request medians are 0.592 ms for each decoder. Lower intermediate storage
+does not imply a faster end-to-end operation here. Both routes remain available;
+the recorded training/evaluation path retains ordinary argmax.
+
+| CPU operation, comparison decoder | Historical reference median / p90 | New model median / p90 |
+| --- | ---: | ---: |
+| One request | 0.514 / 0.549 ms | 0.592 / 0.620 ms |
+| Both requests on one scene | 0.939 / 1.013 ms | 0.597 / 0.618 ms |
+
+The new model is about **1.57x faster for both requests on one scene** in this
+local benchmark, because it reuses perception. It is about **15% slower for a
+single request**. This is an explicit accuracy/latency tradeoff, not a claim of
+universal speed improvement. Measurements exclude image loading, normalization,
+and RGB rendering, and are subject to local CPU scheduling and backend effects.
+See the [full decoder report](experiments/semantic_dilated_v2_decoder.json).
+
+## Current scope and next decision
+
+This milestone improves exact editing substantially on the repeatedly used
+synthetic validation split, retains weaker candidates and seeds, and measures
+where shared inference saves work. It does not establish real-image quality or
+general language understanding. The original circle-only local demo has not
+been changed to this model. Reproduction commands above train local checkpoints;
+weights and generated datasets stay outside Git.
+
+The instruction test set remains reserved. Before evaluating it, freeze the
+intended model/decoder and evaluation protocol. Additional training or tuning
+should continue to use validation only; current validation numbers are not an
+unseen test score.
