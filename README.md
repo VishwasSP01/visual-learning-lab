@@ -391,3 +391,7 @@ experiments, not a requirement for finishing the first milestones.
 
 The original `scripts/draw_circle.py`, `blue_circle.png`, and `red_circle.png` are kept
 as the first hand-created examples.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
