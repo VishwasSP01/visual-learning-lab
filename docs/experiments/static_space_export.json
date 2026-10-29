@@ -1,0 +1,33 @@
+{
+  "checkpoint_bytes": 33445,
+  "checkpoint_sha256": "e114687642887e771d69684b9723ae19ffdf7200cedafc202a99de483894e90d",
+  "examples_sha256": "de2c614be8995d4502c66ab7f82bcbcb3a70675b4866017e723799021c345383",
+  "git_commit": "c95dc154d5ba5c936008a82d2c8a1c3250837894",
+  "git_dirty": true,
+  "input": "float32 NCHW [1,3,64,64] RGB /255",
+  "max_absolute_logit_difference": 2.47955322265625e-05,
+  "native_onnx_class_agreement": true,
+  "onnx_bytes": 31665,
+  "onnx_class_maps_sha256": "aa1e54f5526676cb17539226b1aefcbb4646c76f66ba5f1f25f78820a9921a90",
+  "onnx_sha256": "579a8f10de0860bbb1ffd53f8c73726c31b974ea6879ad597b8c889568c61c2e",
+  "onnx_version": "1.23.2",
+  "onnxruntime_version": "1.31.1",
+  "opset": 18,
+  "output": "3 class logits, lowest-index argmax",
+  "pytorch_class_maps_sha256": "aa1e54f5526676cb17539226b1aefcbb4646c76f66ba5f1f25f78820a9921a90",
+  "runtime": "onnxruntime-web",
+  "runtime_assets_sha256": {
+    "ort-wasm-simd-threaded.mjs": "30ed0b5cd1182ede931fea448afb567d4dc705ec957af09f108a2be5f770dac3",
+    "ort-wasm-simd-threaded.wasm": "4b884c203b0fa48d057be3332c65513ff85aa3c5bddd6946acc0fab7ecda001d",
+    "ort.wasm.min.js": "b8a78c408c40da65fdc8ba0846f7b2948e92a4c6d6b23cc8e4165e428ad95443"
+  },
+  "runtime_package_sha512_base64": "5GeH+bWQ+HxM10z7erGlsWqryrwMbSvm/1tkIsKTT48g0fI19VXVVC435t4t7VsPdSQeS7NmuZPXrQ73k82URw==",
+  "runtime_version": "1.31.1",
+  "scope": "Format conversion and deployment parity on known validation scenes. Frozen test score belongs to original PyTorch evaluation.",
+  "test_images_loaded": false,
+  "torch_version": "2.15.0",
+  "training_performed": false,
+  "validation_input_mask_sha256": "497b48b125bf95ba5ffb23378daf4f76501eac94ddd3c3f72669821f0964cb13",
+  "validation_requests_covered": 500,
+  "validation_scenes_compared": 250
+}

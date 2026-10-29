@@ -37,3 +37,11 @@ jobs:
 
       - name: Run unit tests
         run: uv run --locked python -m unittest discover -s tests -v
+
+      - name: Install Node for static demo checks
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "22"
+
+      - name: Check browser inference helpers
+        run: node --test deploy/huggingface-static/inference.test.mjs

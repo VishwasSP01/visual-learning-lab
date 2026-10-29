@@ -1,0 +1,11 @@
+{
+  "runtime": "onnxruntime-web 1.31.1 WASM, one thread",
+  "requests_compared": 500,
+  "scenes_compared": 250,
+  "all_rendered_rgba_match_pytorch": true,
+  "all_displayed_error_counts_match": true,
+  "exact_requests": 491,
+  "exact_scene_pairs": 244,
+  "wrong_pixels": 20,
+  "scope": "Actual local-browser UI interactions over all validation choices. DOM-rendered PNG pixels independently decoded and hashed against PyTorch predictions. No test images loaded."
+}

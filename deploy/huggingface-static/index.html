@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Visual Learning Lab · Browser editor</title><style>
+    :root { color-scheme: light; --ink:#1b2a32; --muted:#5d6b70; --accent:#16634b; --line:#dce3de; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:#f4f6f1; color:var(--ink); font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    main { max-width:1160px; margin:auto; padding:30px 32px 36px; }
+    .brand { display:flex; align-items:center; gap:10px; font-size:13px; font-weight:700; letter-spacing:.03em; }
+    .mark { width:23px; height:23px; border-radius:50%; background:var(--accent); box-shadow:inset 0 0 0 6px #c3dfcc; }
+    .top { display:flex; justify-content:space-between; align-items:center; padding-bottom:25px; border-bottom:1px solid var(--line); }
+    .badge { display:inline-flex; gap:7px; align-items:center; font-size:12px; color:var(--accent); background:#e4eee5; padding:7px 11px; border-radius:30px; font-weight:600; }
+    .badge::before { content:""; width:6px; height:6px; border-radius:50%; background:var(--accent); }
+    .intro { margin:30px 0 23px; }
+    .eyebrow { color:var(--accent); font-size:11px; letter-spacing:.13em; text-transform:uppercase; font-weight:750; }
+    h1 { font-size:clamp(28px,4vw,43px); line-height:1.14; margin:9px 0 12px; letter-spacing:-.045em; font-weight:650; }
+    .intro p { margin:0; color:var(--muted); font-size:15px; line-height:1.65; }
+    .toolbar { display:flex; align-items:center; justify-content:space-between; gap:15px; background:#fff; border:1px solid var(--line); border-radius:12px; padding:14px 18px; margin-bottom:20px; }
+    .picker { display:flex; align-items:center; flex-wrap:wrap; gap:13px; }
+    label { font-size:13px; font-weight:650; }
+    select,button { font:inherit; font-size:13px; border:1px solid #cbd7cd; border-radius:7px; background:white; color:var(--ink); min-height:37px; padding:8px 12px; }
+    select { min-width:195px; }
+    button { cursor:pointer; font-weight:600; }
+    button:hover:enabled { background:#edf3ed; border-color:var(--accent); }
+    button:disabled, select:disabled { opacity:.5; cursor:default; }
+    button:focus-visible,select:focus-visible { outline:3px solid #8ebd9e; outline-offset:3px; }
+    .navigation { display:flex; gap:7px; }
+    .position { font-size:12px; color:var(--muted); font-variant-numeric:tabular-nums; white-space:nowrap; }
+    .panels { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:17px; }
+    figure { margin:0; background:white; border:1px solid var(--line); border-radius:12px; overflow:hidden; }
+    figure.model { border-color:#86b19a; box-shadow:0 0 0 1px #86b19a; }
+    figcaption { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:14px 17px; border-bottom:1px solid #eaf0ea; font-size:14px; font-weight:650; }
+    figcaption span { color:var(--muted); font-size:11px; font-weight:500; }
+    .canvas { aspect-ratio:1.4; display:flex; align-items:center; justify-content:center; background:radial-gradient(#dfe5dd 1px,transparent 1px); background-size:12px 12px; padding:22px; }
+    .canvas img { width:min(100%,210px); aspect-ratio:1; object-fit:contain; image-rendering:pixelated; box-shadow:0 3px 18px #1b2a320a; }
+    img:not([src]) { visibility:hidden; }
+    .caption { margin:0; padding:12px 17px; font-size:12px; color:var(--muted); border-top:1px solid #eaf0ea; }
+    .scores { display:grid; grid-template-columns:1.35fr 1fr 1fr 1fr; gap:13px; margin-top:21px; }
+    .score { padding:16px 18px; border:1px solid var(--line); border-radius:10px; background:#fff; }
+    .score-label { display:block; font-size:11px; color:var(--muted); margin-bottom:9px; }
+    .score-value { font-size:25px; letter-spacing:-.025em; font-weight:650; font-variant-numeric:tabular-nums; }
+    #match { font-size:21px; }
+    .good { color:#16634b; }
+    .imperfect { color:#925016; }
+    .score-detail { display:block; font-size:10px; color:var(--muted); margin-top:5px; }
+    #status { min-height:21px; margin:13px 2px 0; color:var(--muted); font-size:12px; }
+    #status.error { color:#a32d2d; }
+    .note { display:flex; gap:18px; align-items:baseline; padding-top:19px; margin-top:10px; border-top:1px solid var(--line); }
+    .note strong { font-size:12px; white-space:nowrap; }
+    .note p { margin:0; font-size:12px; color:var(--muted); line-height:1.7; }
+    footer { margin-top:23px; font-size:10px; color:#748078; letter-spacing:.04em; }
+    @media (max-width:760px) {
+      main { padding:20px 18px; }
+      .toolbar { flex-wrap:wrap; }
+      .panels { grid-template-columns:1fr; }
+      .canvas { aspect-ratio:1.7; }
+      .scores { grid-template-columns:1fr 1fr; }
+      .note { display:block; }
+      .note strong { display:block; margin-bottom:7px; }
+      .top { gap:15px; }
+    }
+  </style></head><body><main>
+<header class="top"><div class="brand"><span class="mark" aria-hidden="true"></span>VISUAL LEARNING LAB</div><span class="badge">Runs in your browser</span></header>
+<section class="intro"><div class="eyebrow">Frozen model / Circle and square</div><h1>Choose what changes.</h1><p>Recolour one blue object. Keep the other object and background unchanged.</p></section>
+<div class="toolbar"><div class="picker"><label for="scene">Validation scene</label><select id="scene" disabled></select><label for="instruction">Edit instruction</label><select id="instruction" disabled><option value="circle">Recolour circle</option><option value="square">Recolour square</option></select><span id="position" class="position">Loading…</span></div><div class="navigation"><button id="previous" disabled>← Previous</button><button id="next" disabled>Next →</button></div></div>
+<section class="panels" id="panels" aria-busy="true" aria-label="Input, prediction, and target">
+<figure><figcaption>Input <span>Original scene</span></figcaption><div class="canvas"><img id="input" alt="Original blue circle and square"></div><p class="caption">The same input for either instruction</p></figure>
+<figure class="model"><figcaption>Model edit <span>Predicted result</span></figcaption><div class="canvas"><img id="prediction" alt="Predicted edit"></div><p class="caption">The selected object should become red</p></figure>
+<figure><figcaption>Target <span>Ground truth</span></figcaption><div class="canvas"><img id="target" alt="Expected edit"></div><p class="caption">Reference for comparison and scoring</p></figure></section>
+<section class="scores" aria-label="Scores for this validation request"><div class="score"><span class="score-label">Whole-image result</span><span id="match" class="score-value">—</span><span class="score-detail">Every pixel must match</span></div><div class="score"><span id="edit-label" class="score-label">Selected object edited correctly</span><span id="edit" class="score-value">—</span><span class="score-detail">Requested-region accuracy</span></div><div class="score"><span id="preserve-label" class="score-label">Other object preserved</span><span id="preserve" class="score-value">—</span><span class="score-detail">Opposite-object pixels unchanged</span></div><div class="score"><span class="score-label">Incorrect pixels</span><span id="errors" class="score-value">—</span><span class="score-detail">Across this 64 × 64 image</span></div></section>
+<p id="status" role="status" aria-live="polite">Loading the frozen model…</p>
+<aside class="note"><strong>What this demonstrates</strong><p>Two categorical choices on synthetic shapes. RGB pixels enter the model; labels are used only for the target and scores. This is not real-photo editing or free-form language. All inference happens on your device; the page displays known validation scenes.</p></aside>
+<footer>Original PyTorch frozen test: 972/1,000 exact requests · 482/500 exact pairs · <a href="https://github.com/VishwasSP01/visual-learning-lab/blob/main/docs/instruction_test_evaluation.md" target="_blank" rel="noopener">Protocol and limits</a></footer>
+</main><script src="./vendor/ort.wasm.min.js"></script><script type="module" src="./app.mjs"></script></body></html>
