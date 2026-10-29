@@ -466,8 +466,14 @@ The [first conditioning comparison](docs/instruction_model.md) records both
 threshold, the longer run gets **174 / 500 validation requests exact**, but only
 **9 / 250 scenes** have both requests exact; the control completes zero scenes.
 Square requests still damage circle pixels, so preservation needs improvement.
-These are validation results; the new test set remains reserved. Larger
-generative models are later experiments.
+
+A [validation threshold comparison](docs/instruction_thresholds.md), with those
+weights held fixed, selects a shared **0.95 cutoff** from five declared values.
+Completely correct requests rise to **311 / 500 (62.2%)**, and scenes with both
+edits correct rise to **103 / 250 (41.2%)**. Wrong pixels fall from 4,677 to 1,216,
+although 20 requests lose exactness as the higher cutoff misses more intended
+edits. This remains an imperfect synthetic editor. These are validation results;
+the new test set remains reserved. Larger generative models are later experiments.
 
 The original `scripts/draw_circle.py`, `blue_circle.png`, and `red_circle.png` are kept
 as the first hand-created examples.

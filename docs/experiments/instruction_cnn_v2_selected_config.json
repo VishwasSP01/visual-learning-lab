@@ -1,0 +1,17 @@
+{
+  "checkpoint_sha256": "a828fe69b4728e2769304bb6e98ea4c22ed045437c83e4884dab5bfbb11f4d69",
+  "dataset": "instruction_edits_v1",
+  "manifest_sha256": "3c91db2c02b2caca1dbca8a3ec5cf78dd34c72bb092a36988bda94e561756ddc",
+  "mask_probability_threshold": 0.95,
+  "model": "InstructionEditor",
+  "selected_on": "validation",
+  "selection_rule": "Most exact validation scene pairs; then most exact requests; then fewest wrong pixels; then lowest threshold.",
+  "test_model_performance_measured": false,
+  "threshold_grid": [
+    0.5,
+    0.7,
+    0.8,
+    0.9,
+    0.95
+  ]
+}

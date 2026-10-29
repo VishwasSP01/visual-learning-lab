@@ -155,6 +155,9 @@ The first two validation scenes, retained in manifest order:
 
 ![Conditioned and constant-ID predictions after twenty-four epochs](assets/instruction_cnn_v2_preview.png)
 
-The next step is to diagnose the unwanted circle edits during square requests
-and compare validation operating thresholds against paired-scene success.
-The new test set remains reserved until the model and settings are frozen.
+The [subsequent validation threshold comparison](instruction_thresholds.md)
+keeps these weights fixed and selects a shared 0.95 cutoff from a declared
+five-point grid. Exact requests rise to **311 / 500**, and exact scene pairs to
+**103 / 250**, with some request-level regressions. Square-edit preservation
+remains the weaker behavior. The new test set remains reserved until the model
+and settings are frozen.
