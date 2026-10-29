@@ -1,20 +1,26 @@
+**Instruction-conditioned image editor: 972/1,000 exact requests (97.2%) on a reserved test, vs 542/1,000 for the binary reference.**
+
+| Frozen test metric | Binary reference | Semantic model |
+| --- | ---: | ---: |
+| Exact requests | 542/1,000 (54.2%) | **972/1,000 (97.2%)** |
+| Exact scene pairs | 178/500 (35.6%) | **482/500 (96.4%)** |
+| Wrong pixels | 3,237 | **100** |
+
+[Instruction conditioning](docs/instruction_conditioning.md) ·
+[Semantic editor](docs/semantic_editor.md) ·
+[Frozen test evaluation](docs/instruction_test_evaluation.md)
+
+**Limits:** Synthetic shapes, fixed instruction categories, not real photos.
+
 # Visual Learning Lab — instruction-guided image editing
 
 [![CI](https://github.com/VishwasSP01/visual-learning-lab/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/VishwasSP01/visual-learning-lab/actions/workflows/ci.yml)
 
-**972/1,000 exact edits on a reserved test (97.2%) — previous model: 542/1,000.**
-
-See the [frozen test protocol and results](docs/instruction_test_evaluation.md),
-[recorded counts](docs/experiments/semantic_dilated_v2_test.json), and
-[model comparisons, seed checks, and efficiency measurements](docs/semantic_editor.md).
-
 **Task:** choose “edit circle” or “edit square,” turn that object red, and preserve
-the other object and background. A **7,459-parameter** perception model plus
-categorical object selection gets **both edits completely correct on 482/500
-test scenes (96.4%)**, versus 178/500 for the previous model. Both checkpoints
-and decoding settings were committed before measuring test performance.
-These results concern controlled synthetic shapes, not real-photo editing or
-free-form language understanding.
+the other object and background. A **7,459-parameter** perception model predicts
+object classes; the categorical instruction selects the object to edit.
+Both checkpoints and decoding settings were committed before measuring test
+performance. This does not demonstrate free-form language understanding.
 
 ![Frozen test examples: input, previous editor, semantic editor, and target](docs/assets/semantic_dilated_v2_test.png)
 
