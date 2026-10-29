@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "experiment": "semantic_dilated_v2_frozen_test",
+  "command": "evaluate_frozen_instruction_model",
+  "parameters": {
+    "data_dir": "data/instruction_edits_v1",
+    "run_dir": "results/reproductions/semantic_dilated_v2",
+    "reference_run_dir": "results/reproductions/instruction_cnn_v2",
+    "frozen_config": "docs/experiments/semantic_dilated_v2_frozen_plan.json",
+    "output_dir": "results/reproductions/semantic_dilated_v2_frozen_test"
+  }
+}

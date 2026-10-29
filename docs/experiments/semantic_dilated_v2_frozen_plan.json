@@ -1,0 +1,51 @@
+{
+  "evaluation_device": "cpu",
+  "expected_requests": 1000,
+  "expected_scenes": 500,
+  "frozen_before_first_test_performance": true,
+  "preview": "First four test requests in manifest order.",
+  "primary_metric": "Exact scene pairs: both complete targets match under the two requests.",
+  "primary_seed": 42,
+  "reference": {
+    "checkpoint_sha256": "a828fe69b4728e2769304bb6e98ea4c22ed045437c83e4884dab5bfbb11f4d69",
+    "dataset": "instruction_edits_v1",
+    "manifest_sha256": "3c91db2c02b2caca1dbca8a3ec5cf78dd34c72bb092a36988bda94e561756ddc",
+    "mask_probability_threshold": 0.95,
+    "model": "InstructionEditor",
+    "selected_on": "validation",
+    "selection_rule": "Most exact validation scene pairs; then most exact requests; then fewest wrong pixels; then lowest threshold.",
+    "test_model_performance_measured": false,
+    "threshold_grid": [
+      0.5,
+      0.7,
+      0.8,
+      0.9,
+      0.95
+    ]
+  },
+  "reference_decoding": "Sigmoid threshold 0.95, fixed from validation.",
+  "schema_version": 1,
+  "selected_config_sha256": {
+    "reference": "3535ac034e2d6b75d4ceb9e282b51e1228b83fe31b9e6cd4efb395313ca9892f",
+    "semantic": "766b661fc5dac988c7c2c913257c5e029b2828a3735b1f795dec0505a855a27d"
+  },
+  "selection_note": "Only the established seed-42 checkpoint is tested; no alternate seeds or thresholds selected on test.",
+  "selection_performed": false,
+  "semantic": {
+    "architecture": "dilated",
+    "checkpoint_sha256": "e114687642887e771d69684b9723ae19ffdf7200cedafc202a99de483894e90d",
+    "class_mapping": {
+      "background": 0,
+      "circle": 1,
+      "square": 2
+    },
+    "dataset": "instruction_edits_v1",
+    "decoder": "three_class_argmax",
+    "manifest_sha256": "3c91db2c02b2caca1dbca8a3ec5cf78dd34c72bb092a36988bda94e561756ddc",
+    "model": "SemanticDilatedEditor",
+    "selected_on": "validation",
+    "test_model_performance_measured": false
+  },
+  "semantic_decoding": "Three-class argmax, lowest-class-index ties; instruction ID+1 selects object class.",
+  "split": "test"
+}

@@ -37,6 +37,9 @@ COMMANDS = {
         **SPATIAL_ANALYSIS, "reference_run_dir": Path, "reference_config": Path,
     }),
     "evaluate_frozen_model": ("frozen_evaluation", {**SPATIAL_ANALYSIS, "config": Path}),
+    "evaluate_frozen_instruction_model": ("frozen_instruction_evaluation", {
+        **SPATIAL_ANALYSIS, "reference_run_dir": Path, "frozen_config": Path,
+    }),
 }
 
 
