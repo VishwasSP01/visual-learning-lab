@@ -1,28 +1,28 @@
-# Visual Learning Lab
+# Visual Learning Lab — instruction-guided image editing
 
 [![CI](https://github.com/VishwasSP01/visual-learning-lab/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/VishwasSP01/visual-learning-lab/actions/workflows/ci.yml)
 
-**Task:** recolor a blue circle while preserving a blue square and the background.
-**Frozen test result:** a 7,425-parameter CNN plus a fixed renderer gets
-**711 / 1,000 images completely correct (71.1%)**, versus **0 / 1,000** for the
-color-replacement rule. We selected the checkpoint and threshold on validation
-data before measuring test performance. This is a controlled synthetic task.
+**972/1,000 exact edits on a reserved test (97.2%) — previous model: 542/1,000.**
 
-![Frozen test examples: original image, color-rule output, CNN edit, and target](docs/assets/spatial_cnn_test_preview.png)
+See the [frozen test protocol and results](docs/instruction_test_evaluation.md),
+[recorded counts](docs/experiments/semantic_dilated_v2_test.json), and
+[model comparisons, seed checks, and efficiency measurements](docs/semantic_editor.md).
 
-The preview shows the first four test examples, rather than examples selected
-for their results. See the [test protocol and limitations](docs/test_evaluation.md)
-and [recorded counts](docs/experiments/shape_cnn_v1_test.json).
+**Task:** choose “edit circle” or “edit square,” turn that object red, and preserve
+the other object and background. A **7,459-parameter** perception model plus
+categorical object selection gets **both edits completely correct on 482/500
+test scenes (96.4%)**, versus 178/500 for the previous model. Both checkpoints
+and decoding settings were committed before measuring test performance.
+These results concern controlled synthetic shapes, not real-photo editing or
+free-form language understanding.
 
-**Latest instruction benchmark — frozen test:** a **7,459-parameter** shared
-perception model plus categorical object selection gets **972/1,000 edits exact
-(97.2%)** and **482/500 scenes with both edits exact (96.4%)**. The previous
-instruction model gets 54.2% and 35.6%. Both checkpoints and decoders were
-committed before measuring test performance. See the [frozen test report](docs/instruction_test_evaluation.md)
-and [validation comparisons, seed checks, and efficiency measurements](docs/semantic_editor.md).
+![Frozen test examples: input, previous editor, semantic editor, and target](docs/assets/semantic_dilated_v2_test.png)
 
-A laptop-first project exploring neural networks, diffusion models, and reliable
-image editing through reproducible experiments.
+The preview shows the first two test scenes under both requests in manifest
+order. The earlier circle-only benchmark is documented below.
+
+A laptop-first project learning neural networks and precise image editing
+through reproducible experiments.
 
 The goal is to learn how models change a requested part of an image while
 preserving everything else. We build this in small steps on an Apple-silicon Mac.
