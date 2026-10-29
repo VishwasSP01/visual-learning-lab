@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Visual Learning Lab · Image editor demo</title>
+  <style>
+    :root { color-scheme: light; --ink:#1b2a32; --muted:#5d6b70; --accent:#16634b; --line:#dce3de; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:#f4f6f1; color:var(--ink); font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    main { max-width:1160px; margin:auto; padding:30px 32px 36px; }
+    .brand { display:flex; align-items:center; gap:10px; font-size:13px; font-weight:700; letter-spacing:.03em; }
+    .mark { width:23px; height:23px; border-radius:50%; background:var(--accent); box-shadow:inset 0 0 0 6px #c3dfcc; }
+    .top { display:flex; justify-content:space-between; align-items:center; padding-bottom:25px; border-bottom:1px solid var(--line); }
+    .badge { display:inline-flex; gap:7px; align-items:center; font-size:12px; color:var(--accent); background:#e4eee5; padding:7px 11px; border-radius:30px; font-weight:600; }
+    .badge::before { content:""; width:6px; height:6px; border-radius:50%; background:var(--accent); }
+    .intro { margin:30px 0 23px; }
+    .eyebrow { color:var(--accent); font-size:11px; letter-spacing:.13em; text-transform:uppercase; font-weight:750; }
+    h1 { font-size:clamp(28px,4vw,43px); line-height:1.14; margin:9px 0 12px; letter-spacing:-.045em; font-weight:650; }
+    .intro p { margin:0; color:var(--muted); font-size:15px; line-height:1.65; }
+    .toolbar { display:flex; align-items:center; justify-content:space-between; gap:15px; background:#fff; border:1px solid var(--line); border-radius:12px; padding:14px 18px; margin-bottom:20px; }
+    .picker { display:flex; align-items:center; flex-wrap:wrap; gap:13px; }
+    label { font-size:13px; font-weight:650; }
+    select,button { font:inherit; font-size:13px; border:1px solid #cbd7cd; border-radius:7px; background:white; color:var(--ink); min-height:37px; padding:8px 12px; }
+    select { min-width:195px; }
+    button { cursor:pointer; font-weight:600; }
+    button:hover:enabled { background:#edf3ed; border-color:var(--accent); }
+    button:disabled, select:disabled { opacity:.5; cursor:default; }
+    button:focus-visible,select:focus-visible { outline:3px solid #8ebd9e; outline-offset:3px; }
+    .navigation { display:flex; gap:7px; }
+    .position { font-size:12px; color:var(--muted); font-variant-numeric:tabular-nums; white-space:nowrap; }
+    .panels { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:17px; }
+    figure { margin:0; background:white; border:1px solid var(--line); border-radius:12px; overflow:hidden; }
+    figure.model { border-color:#86b19a; box-shadow:0 0 0 1px #86b19a; }
+    figcaption { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:14px 17px; border-bottom:1px solid #eaf0ea; font-size:14px; font-weight:650; }
+    figcaption span { color:var(--muted); font-size:11px; font-weight:500; }
+    .canvas { aspect-ratio:1.4; display:flex; align-items:center; justify-content:center; background:radial-gradient(#dfe5dd 1px,transparent 1px); background-size:12px 12px; padding:22px; }
+    .canvas img { width:min(100%,210px); aspect-ratio:1; object-fit:contain; image-rendering:pixelated; box-shadow:0 3px 18px #1b2a320a; }
+    img:not([src]) { visibility:hidden; }
+    .caption { margin:0; padding:12px 17px; font-size:12px; color:var(--muted); border-top:1px solid #eaf0ea; }
+    .scores { display:grid; grid-template-columns:1.35fr 1fr 1fr 1fr; gap:13px; margin-top:21px; }
+    .score { padding:16px 18px; border:1px solid var(--line); border-radius:10px; background:#fff; }
+    .score-label { display:block; font-size:11px; color:var(--muted); margin-bottom:9px; }
+    .score-value { font-size:25px; letter-spacing:-.025em; font-weight:650; font-variant-numeric:tabular-nums; }
+    #match { font-size:21px; }
+    .good { color:#16634b; }
+    .imperfect { color:#925016; }
+    .score-detail { display:block; font-size:10px; color:var(--muted); margin-top:5px; }
+    #status { min-height:21px; margin:13px 2px 0; color:var(--muted); font-size:12px; }
+    #status.error { color:#a32d2d; }
+    .note { display:flex; gap:18px; align-items:baseline; padding-top:19px; margin-top:10px; border-top:1px solid var(--line); }
+    .note strong { font-size:12px; white-space:nowrap; }
+    .note p { margin:0; font-size:12px; color:var(--muted); line-height:1.7; }
+    footer { margin-top:23px; font-size:10px; color:#748078; letter-spacing:.04em; }
+    @media (max-width:760px) {
+      main { padding:20px 18px; }
+      .toolbar { flex-wrap:wrap; }
+      .panels { grid-template-columns:1fr; }
+      .canvas { aspect-ratio:1.7; }
+      .scores { grid-template-columns:1fr 1fr; }
+      .note { display:block; }
+      .note strong { display:block; margin-bottom:7px; }
+      .top { gap:15px; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <header class="top">
+    <div class="brand"><span class="mark" aria-hidden="true"></span>VISUAL LEARNING LAB</div>
+    <span class="badge">Frozen model · Local demo</span>
+  </header>
+  <section class="intro" aria-labelledby="title">
+    <div class="eyebrow">Experiment 01 / Shape-aware editing</div>
+    <h1>See what the model changes.</h1>
+    <p>Turn the blue circle red. Keep the blue square and background unchanged.</p>
+  </section>
+  <div class="toolbar">
+    <div class="picker">
+      <label for="example">Validation example</label>
+      <select id="example" disabled aria-label="Validation example"></select>
+      <span class="position" id="position">Loading examples…</span>
+    </div>
+    <div class="navigation">
+      <button id="previous" disabled type="button">← Previous</button>
+      <button id="next" disabled type="button">Next →</button>
+    </div>
+  </div>
+  <section class="panels" aria-label="Input, model edit, and target comparison" aria-busy="true" id="panels">
+    <figure><figcaption>Input <span>Original scene</span></figcaption><div class="canvas"><img id="input" alt="Original scene containing a blue circle and a blue square"></div><p class="caption">What the network receives</p></figure>
+    <figure class="model"><figcaption>Model edit <span>Predicted result</span></figcaption><div class="canvas"><img id="prediction" alt="The model's edit of the selected scene"></div><p class="caption">CNN location prediction + fixed red renderer</p></figure>
+    <figure><figcaption>Target <span>Ground truth</span></figcaption><div class="canvas"><img id="target" alt="Expected result with a red circle and an unchanged blue square"></div><p class="caption">Reference for comparison and scoring</p></figure>
+  </section>
+  <section class="scores" aria-label="Scores for the displayed example">
+    <div class="score"><span class="score-label">Whole-image result</span><span class="score-value" id="match">—</span><span class="score-detail">Every pixel must match the target</span></div>
+    <div class="score"><span class="score-label">Circle edited correctly</span><span class="score-value" id="circle">—</span><span class="score-detail">Pixels inside the circle</span></div>
+    <div class="score"><span class="score-label">Square preserved</span><span class="score-value" id="square">—</span><span class="score-detail">Blue square pixels unchanged</span></div>
+    <div class="score"><span class="score-label">Incorrect pixels</span><span class="score-value" id="errors">—</span><span class="score-detail">Across this 64 × 64 image</span></div>
+  </section>
+  <p id="status" role="status" aria-live="polite">Loading the saved editor…</p>
+  <aside class="note"><strong>What this demonstrates</strong><p>A single fixed edit on synthetic shapes. The network receives only RGB pixels; targets and masks are used for scoring. Text instructions and real-photo editing are future experiments. These per-example validation scores are not a new test benchmark.</p></aside>
+  <footer id="details">CPU INFERENCE · VALIDATION EXAMPLES IN MANIFEST ORDER</footer>
+</main>
+<script>
+  const byId = id => document.getElementById(id);
+  let examples = [], index = 0, sequence = 0;
+  function controls(loading) {
+    byId('example').disabled = loading;
+    byId('previous').disabled = loading || index === 0;
+    byId('next').disabled = loading || index >= examples.length - 1;
+    byId('panels').setAttribute('aria-busy', String(loading));
+  }
+  async function json(url) {
+    const response = await fetch(url, {cache:'no-store'});
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || 'Could not load the example.');
+    return result;
+  }
+  async function showExample() {
+    const request = ++sequence;
+    controls(true);
+    byId('status').className = '';
+    byId('status').textContent = 'Running the saved editor…';
+    // Clear the previous case while loading, so its scores cannot be mistaken for this one.
+    for (const key of ['input','prediction','target']) byId(key).removeAttribute('src');
+    for (const key of ['match','circle','square','errors']) byId(key).textContent = '—';
+    try {
+      const result = await json('/api/example?id=' + encodeURIComponent(examples[index]));
+      if (request !== sequence) return;
+      for (const key of ['input','prediction','target']) byId(key).src = result.images[key];
+      const scores = result.scores;
+      byId('match').textContent = scores.exact_image ? 'Exact match' : 'Contains errors';
+      byId('match').className = 'score-value ' + (scores.exact_image ? 'good' : 'imperfect');
+      byId('circle').textContent = (scores.circle_accuracy * 100).toFixed(2) + '%';
+      byId('square').textContent = (scores.square_preservation * 100).toFixed(2) + '%';
+      byId('errors').textContent = scores.wrong_pixels.toLocaleString();
+      byId('position').textContent = result.position + ' of ' + result.total;
+      byId('status').textContent = result.id + ' · Scores apply to this example only.';
+    } catch (error) {
+      byId('status').className = 'error';
+      byId('status').textContent = error.message;
+      byId('position').textContent = 'Example unavailable';
+    } finally {
+      if (request === sequence) controls(false);
+    }
+  }
+  byId('example').addEventListener('change', () => { index = byId('example').selectedIndex; showExample(); });
+  for (const [id,step] of [['previous',-1],['next',1]]) byId(id).addEventListener('click', () => {
+    index = Math.max(0, Math.min(examples.length - 1, index + step));
+    byId('example').selectedIndex = index;
+    showExample();
+  });
+  (async () => {
+    try {
+      const result = await json('/api/examples');
+      examples = result.examples;
+      if (!examples.length) throw new Error('No validation examples are available.');
+      for (const id of examples) byId('example').add(new Option(id, id));
+      byId('details').textContent = 'CPU INFERENCE · THRESHOLD ' + result.threshold.toFixed(2) + ' · VALIDATION EXAMPLES IN MANIFEST ORDER';
+      await showExample();
+    } catch (error) {
+      byId('status').className = 'error';
+      byId('status').textContent = error.message;
+      byId('position').textContent = 'Could not load examples';
+    }
+  })();
+</script>
+</body>
+</html>

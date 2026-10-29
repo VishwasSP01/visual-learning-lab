@@ -20,6 +20,23 @@ image editing through reproducible experiments.
 The goal is to learn how models change a requested part of an image while
 preserving everything else. We build this in small steps on an Apple-silicon Mac.
 
+## Try the local demo
+
+With the original spatial dataset and saved checkpoint available locally:
+
+```bash
+uv run --locked python scripts/demo.py
+```
+
+Open [the local demo](http://127.0.0.1:7860) to browse all 500 validation examples.
+It shows the input, CNN edit, and target side by side, with exact-match and
+preservation scores for each case. The saved model runs on CPU, using the
+validation-selected threshold; the original model's threshold is 0.80.
+The demo requires no additional dependencies and performs no training.
+
+Checkpoints and datasets are excluded from Git. See [the demo guide](docs/demo.md)
+for prerequisites, a fresh-training route, and how to stop the local server.
+
 ## Decisions and lessons
 
 - **Measure whether the edit succeeds.** Returning the unchanged image scores
