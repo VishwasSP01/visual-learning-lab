@@ -1,5 +1,19 @@
 # Visual Learning Lab
 
+[![CI](https://github.com/VishwasSP01/visual-learning-lab/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/VishwasSP01/visual-learning-lab/actions/workflows/ci.yml)
+
+**Task:** recolor a blue circle while preserving a blue square and the background.
+**Frozen test result:** a 7,425-parameter CNN plus a fixed renderer gets
+**711 / 1,000 images completely correct (71.1%)**, versus **0 / 1,000** for the
+color-replacement rule. We selected the checkpoint and threshold on validation
+data before measuring test performance. This is a controlled synthetic task.
+
+![Frozen test examples: original image, color-rule output, CNN edit, and target](docs/assets/spatial_cnn_test_preview.png)
+
+The preview shows the first four test examples, rather than examples selected
+for their results. See the [test protocol and limitations](docs/test_evaluation.md)
+and [recorded counts](docs/experiments/shape_cnn_v1_test.json).
+
 A laptop-first project exploring neural networks, diffusion models, and reliable
 image editing through reproducible experiments.
 
@@ -74,6 +88,20 @@ Regenerating the dataset overwrites its generated files. The generated `data/`
 directory and local Python environment are excluded from Git; the code and
 dependency lockfile are enough to rebuild this milestone. The earlier 100-pair
 debugging dataset remains in `data/circle_edits/`; version 2 is stored separately.
+
+## Automated checks
+
+GitHub Actions installs Python 3.12.16 and the locked dependencies, then runs all
+unit tests on every push and pull request. The macOS ARM runner matches the
+project's Apple-silicon environment. These fixture-based checks need no generated
+dataset, trained checkpoint, or GPU training run.
+
+Run the same checks locally:
+
+```bash
+uv sync --locked
+uv run --locked python -m unittest discover -v
+```
 
 ## How to read the preview
 
