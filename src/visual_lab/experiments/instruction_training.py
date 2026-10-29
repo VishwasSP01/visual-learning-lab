@@ -254,7 +254,8 @@ def main(argv=None, *, run_context=None):
                     "manifest_sha256": args.manifest_sha256}, path)
         checkpoints[mode] = hashlib.sha256(path.read_bytes()).hexdigest()
     report = {
-        **metadata, "experiment": "instruction_cnn_v1", "dataset": "instruction_edits_v1", "split": "validation",
+        **metadata, "experiment": run_context["declared"]["experiment"] if run_context else "instruction_cnn_v1",
+        "dataset": "instruction_edits_v1", "split": "validation",
         "model": "InstructionEditor: Embedding(2,4), RGB+4 broadcast embedding channels, dilated CNN 16 channels, 1-channel mask logits",
         "parameters": sum(p.numel() for p in models["conditioned"].parameters()), "receptive_field": 31,
         "training_device": str(device), "evaluation_device": "cpu", "torch_version": str(torch.__version__),

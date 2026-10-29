@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "experiment": "instruction_cnn_v2",
+  "command": "train_instruction_model",
+  "parameters": {
+    "epochs": 24,
+    "batch_size": 64,
+    "learning_rate": 0.001,
+    "device": "auto",
+    "seed": 42,
+    "data_dir": "data/instruction_edits_v1",
+    "output_dir": "results/reproductions/instruction_cnn_v2",
+    "mask_threshold": 0.5,
+    "manifest_sha256": "3c91db2c02b2caca1dbca8a3ec5cf78dd34c72bb092a36988bda94e561756ddc"
+  }
+}

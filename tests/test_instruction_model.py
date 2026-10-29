@@ -117,6 +117,7 @@ class InstructionTrainingChecks(unittest.TestCase):
             self.assertFalse(report["test_images_loaded"])
             self.assertFalse((data_dir / "test").exists())
             self.assertEqual(report["configuration"]["declared"], config)
+            self.assertEqual(report["experiment"], config["experiment"])
             self.assertEqual(report["training"]["conditioned"]["initial_state_sha256"],
                              report["training"]["instruction_blind"]["initial_state_sha256"])
             for key in ("instruction_blind", "conditioned_clamped_to_circle"):

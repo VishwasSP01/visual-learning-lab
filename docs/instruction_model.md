@@ -83,3 +83,32 @@ The training loader permits only training and validation image access. Tests
 delete every test image before an end-to-end fixture run, demonstrating that
 the pipeline does not depend on those files. The new 500-scene test set stays
 reserved. This experiment does not replace the original fixed-circle benchmark.
+
+## First 12-epoch result and next declared run
+
+The first run used clean revision
+[`eaf3573`](https://github.com/VishwasSP01/visual-learning-lab/commit/eaf3573a0bc95c07f9206fc40cdadb3222bd8a1d).
+The conditioned model gets **12 / 500 requests exact (2.4%)**, and **0 / 250
+scenes** have both requests exact. The constant-ID control gets zero exact
+requests and zero exact scene pairs. These results are retained in the
+[original validation report](experiments/instruction_cnn_v1_validation.json).
+
+Changing the instruction changes the conditioned output on all 250 validation
+scenes, and swapping the IDs reduces exact requests to zero. This confirms an
+effect of the ID, but does not establish reliable editing. Opposite-object
+preservation is only 81.41% overall, with 63.92% for square-edit requests.
+
+Validation loss is still improving: 0.12467 at epoch 8 and 0.04830 at epoch 12.
+Before measuring any test performance, a separate `instruction_cnn_v2` config
+extends **both models to 24 epochs**. It keeps the architecture, seed, optimizer,
+batch size, loss, manifest, and 0.50 threshold unchanged. This is a validation-led
+training-budget change; the first result is not overwritten or presented as a
+successful editor. The config and this rationale are committed before that run.
+
+```bash
+uv run --locked python scripts/run_experiment.py --config configs/instruction_cnn_v2.json
+```
+
+The first two validation scenes under the original 12-epoch model:
+
+![First validation scene pairs after twelve epochs](assets/instruction_cnn_v1_preview.png)
