@@ -54,3 +54,58 @@ class InstructionEditor(nn.Module):
         embedding = self.instruction_embedding(instruction_ids)
         planes = embedding[:, :, None, None].expand(-1, -1, images.shape[2], images.shape[3])
         return self.layers(torch.cat((images, planes), dim=1))
+
+
+class SemanticDilatedEditor(nn.Module):
+    """Classify background/circle/square jointly with the original dilated trunk."""
+
+    def __init__(self):
+        super().__init__()
+        layers, channels = [], 3
+        for dilation in (1, 2, 4, 8):
+            layers.extend((nn.Conv2d(channels, 16, 3, padding=dilation, dilation=dilation), nn.ReLU()))
+            channels = 16
+        layers.append(nn.Conv2d(16, 3, 1))
+        self.layers = nn.Sequential(*layers)
+
+    def forward(self, images):
+        return self.layers(images)
+
+
+class SeparableResidual(nn.Module):
+    """Two depthwise/pointwise convolutions with a same-width residual path."""
+
+    def __init__(self, channels):
+        super().__init__()
+        layers = []
+        for _ in range(2):
+            layers.extend((nn.Conv2d(channels, channels, 3, padding=1, groups=channels),
+                           nn.Conv2d(channels, channels, 1), nn.ReLU()))
+        self.layers = nn.Sequential(*layers)
+
+    def forward(self, features):
+        return features + self.layers(features)
+
+
+class SemanticLiteUNet(nn.Module):
+    """Small multiscale RGB segmenter; no targets or task labels enter forward."""
+
+    def __init__(self):
+        super().__init__()
+        self.stem = nn.Sequential(nn.Conv2d(3, 8, 3, padding=1), nn.ReLU(), SeparableResidual(8))
+        self.down1 = nn.Sequential(nn.Conv2d(8, 12, 3, stride=2, padding=1), nn.ReLU(), SeparableResidual(12))
+        self.down2 = nn.Sequential(nn.Conv2d(12, 16, 3, stride=2, padding=1), nn.ReLU(), SeparableResidual(16))
+        self.up1 = nn.Sequential(nn.Conv2d(16 + 12, 12, 1), nn.ReLU(), SeparableResidual(12))
+        self.up2 = nn.Sequential(nn.Conv2d(12 + 8, 8, 1), nn.ReLU(), SeparableResidual(8))
+        self.head = nn.Conv2d(8, 3, 1)
+
+    def forward(self, images):
+        from torch.nn.functional import interpolate
+
+        fine = self.stem(images)
+        middle = self.down1(fine)
+        coarse = self.down2(middle)
+        up = interpolate(coarse, size=middle.shape[-2:], mode="bilinear", align_corners=False)
+        up = self.up1(torch.cat((up, middle), dim=1))
+        up = interpolate(up, size=fine.shape[-2:], mode="bilinear", align_corners=False)
+        return self.head(self.up2(torch.cat((up, fine), dim=1)))

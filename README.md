@@ -92,7 +92,7 @@ uv run --locked python scripts/run_experiment.py --config configs/shape_cnn_v1.j
 
 The config specifies the data, seed, training settings, device, and output path.
 Add `--dry-run` to validate and display those settings without training or writing
-files. Ten configs cover the training, baseline, and analysis pipelines.
+files. Versioned configs cover the training, baseline, and analysis pipelines.
 Their outputs go to `results/reproductions/`; the runner refuses to reuse an
 existing output directory. The original commands below remain available.
 

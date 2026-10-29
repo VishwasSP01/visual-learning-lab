@@ -22,6 +22,10 @@ COMMANDS = {
     "train_instruction_model": ("instruction_training", {
         **TRAINING, "mask_threshold": float, "manifest_sha256": str,
     }),
+    "train_semantic_model": ("semantic_training", {
+        **TRAINING, "architecture": str, "dice_weight": float, "manifest_sha256": str,
+        "reference_run_dir": Path, "reference_config": Path,
+    }),
     "evaluate_baseline": ("baseline_evaluation", {
         "data_dir": Path, "split": str, "output_dir": Path,
     }),
@@ -86,6 +90,10 @@ def load_configuration(path, root=ROOT):
             raise ValueError("split must be train, validation, or test.")
         if key == "mask_threshold" and not 0 < value < 1:
             raise ValueError("mask_threshold must be strictly between 0 and 1.")
+        if key == "dice_weight" and not 0 <= value <= 1:
+            raise ValueError("dice_weight must be between 0 and 1.")
+        if key == "architecture" and value not in ("dilated", "lite_unet"):
+            raise ValueError("architecture must be dilated or lite_unet.")
         if key == "manifest_sha256" and not re.fullmatch(r"[0-9a-f]{64}", value):
             raise ValueError("manifest_sha256 must be a lowercase SHA-256 digest.")
         resolved[key] = str((root / value).resolve()) if kind is Path else value
