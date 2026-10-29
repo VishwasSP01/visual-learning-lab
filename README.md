@@ -20,6 +20,31 @@ image editing through reproducible experiments.
 The goal is to learn how models change a requested part of an image while
 preserving everything else. We build this in small steps on an Apple-silicon Mac.
 
+## Decisions and lessons
+
+- **Measure whether the edit succeeds.** Returning the unchanged image scores
+  94.38% whole-image pixel accuracy on the color-only validation task, but edits
+  no circle correctly. We report exact-image success, edit accuracy, and
+  preservation separately so the large background cannot hide a failed edit.
+- **Make the task require spatial context.** A pixelwise network cannot choose
+  between a blue circle and a blue square using color alone. The CNN learns
+  where to edit; a fixed renderer applies red. This isolates localization and
+  preservation before adding a learned color operation or instructions.
+  See the [generalization probes](docs/generalization.md).
+- **Choose thresholds against the declared objective.** Among five validation
+  candidates, 0.80 gives 338 / 500 exact images; 0.95 gives 252 / 500 because it
+  misses more circle pixels. We selected 0.80 by exact-image success before
+  evaluating test performance. See the [threshold comparison](docs/confidence_thresholds.md).
+- **Freeze decisions before measuring test performance.** The committed
+  checkpoint and threshold produced 711 / 1,000 exact test images. That test is
+  now observed; instruction conditioning needs a newly reserved holdout.
+  This result concerns synthetic shapes, not real-photo editing or language
+  understanding. See the [test protocol](docs/test_evaluation.md).
+- **Make results traceable.** Versioned configs specify settings and training
+  seeds. New reports record the Git revision, dirty status, and config, source,
+  and dependency-file hashes. A commit hash alone cannot identify uncommitted
+  code. See the [experiment guide](docs/experiment_configs.md).
+
 ## Repository layout
 
 ```text
