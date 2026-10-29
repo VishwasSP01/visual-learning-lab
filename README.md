@@ -440,16 +440,26 @@ counts, example outputs, and limitations.
 ## Scope and next step
 
 This is synthetic learning data, not evidence of real-photo editing capability.
-The splits share the same drawing process and instruction; they do not establish
-generalization to new object types, instructions, or real images. In particular,
+The first experiment's splits share the same drawing process and instruction;
+they do not establish generalization to new object types, instructions, or real
+images. In particular,
 the original color-only task can be solved by a simple color-replacement rule,
 which remains a baseline when interpreting neural-network results. Learning a
 single fixed transformation does not demonstrate language understanding.
 
-The first experiment is now recorded through frozen test evaluation. Next we
-can introduce instruction conditioning: choosing which shape to edit from a
-request, with a newly reserved holdout. Larger generative models are later
-experiments, not a requirement for finishing the first milestones.
+The first experiment is now recorded through frozen test evaluation. The next
+data milestone introduces **instruction conditioning**: each scene has both an
+“edit circle” and an “edit square” request, kept together in one split. The
+generator creates 3,250 unique scenes and 6,500 requests, with fresh validation
+and test examples. No instruction-conditioned model has been trained yet.
+
+```bash
+uv run --locked python scripts/generate_instruction_pairs.py
+```
+
+See [the instruction data contract](docs/instruction_conditioning.md) for scene
+grouping, categorical instruction IDs, label rules, and the paired-scene metric.
+Larger generative models are later experiments.
 
 The original `scripts/draw_circle.py`, `blue_circle.png`, and `red_circle.png` are kept
 as the first hand-created examples.
