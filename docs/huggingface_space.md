@@ -19,8 +19,9 @@ new accounts and serve files without a Python inference server.
 
 ## What is packaged
 
-Source: `deploy/huggingface-static/`. Generated upload bundle:
-`results/huggingface-static/` (excluded from Git).
+Source: `deploy/huggingface-static/`. The verified upload bundle is
+`results/huggingface-static-ready/`, also packaged as
+`results/huggingface-static-ready.zip` (about 4 MB compressed; excluded from Git).
 
 - Static HTML and JavaScript with circle/square choices, all 250 validation
   scenes, original/prediction/target panels, and per-request scores.
@@ -48,8 +49,8 @@ From the repository root, with the original local artifacts available:
 ```bash
 uv venv --python 3.12 results/space-export-env
 uv pip install --python results/space-export-env/bin/python -e . -r deploy/huggingface-static/requirements-export.txt
-results/space-export-env/bin/python deploy/huggingface-static/build_space.py
-uv run --locked python -m http.server 7861 --bind 127.0.0.1 --directory results/huggingface-static
+results/space-export-env/bin/python deploy/huggingface-static/build_space.py --output results/huggingface-static-ready
+uv run --locked python -m http.server 7861 --bind 127.0.0.1 --directory results/huggingface-static-ready
 ```
 
 The builder requires a new output directory; pass `--output` for another build.

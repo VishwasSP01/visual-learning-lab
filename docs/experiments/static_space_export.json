@@ -2,8 +2,8 @@
   "checkpoint_bytes": 33445,
   "checkpoint_sha256": "e114687642887e771d69684b9723ae19ffdf7200cedafc202a99de483894e90d",
   "examples_sha256": "de2c614be8995d4502c66ab7f82bcbcb3a70675b4866017e723799021c345383",
-  "git_commit": "c95dc154d5ba5c936008a82d2c8a1c3250837894",
-  "git_dirty": true,
+  "git_commit": "149aa861a2015e4ed0a74194013d503d9e9db284",
+  "git_dirty": false,
   "input": "float32 NCHW [1,3,64,64] RGB /255",
   "max_absolute_logit_difference": 2.47955322265625e-05,
   "native_onnx_class_agreement": true,
@@ -17,6 +17,8 @@
   "pytorch_class_maps_sha256": "aa1e54f5526676cb17539226b1aefcbb4646c76f66ba5f1f25f78820a9921a90",
   "runtime": "onnxruntime-web",
   "runtime_assets_sha256": {
+    "LICENSE": "2f07c72751aed99790b8a4869cf2311df85a860b22ded05fa22803587a48922c",
+    "ThirdPartyNotices.txt": "143764b952fdb1a7c69ce653bfba74a7744d6a8a573bfb73e235fba356c83de3",
     "ort-wasm-simd-threaded.mjs": "30ed0b5cd1182ede931fea448afb567d4dc705ec957af09f108a2be5f770dac3",
     "ort-wasm-simd-threaded.wasm": "4b884c203b0fa48d057be3332c65513ff85aa3c5bddd6946acc0fab7ecda001d",
     "ort.wasm.min.js": "b8a78c408c40da65fdc8ba0846f7b2948e92a4c6d6b23cc8e4165e428ad95443"
@@ -24,6 +26,14 @@
   "runtime_package_sha512_base64": "5GeH+bWQ+HxM10z7erGlsWqryrwMbSvm/1tkIsKTT48g0fI19VXVVC435t4t7VsPdSQeS7NmuZPXrQ73k82URw==",
   "runtime_version": "1.31.1",
   "scope": "Format conversion and deployment parity on known validation scenes. Frozen test score belongs to original PyTorch evaluation.",
+  "source_files_sha256": {
+    "README.md": "52acd99173c941845fabf0c4d7cb8369b75330b8cfa812decd3b7af7d5665c8c",
+    "app.mjs": "f6860cc1ba8aaa4c0421d4a10e225ad095b776a002d42c502f334f2c09851e5f",
+    "build_space.py": "4254f7c1bd65fc7c006721d6b84212023ac683c8081b1e11ffded8fbda63d51e",
+    "index.html": "838f1a4d210c3ebc2402b030972d7876631536bc86897e6d0035085f7dd2c725",
+    "inference.mjs": "5f774bcf537687f6fdeee352f4eb7feb9c8af947db2766af365c26d9aa0c0b33",
+    "requirements-export.txt": "9a651d7c613fa5dcce0cbb82181e9cc41335f01cca74706f58265fc07e940da7"
+  },
   "test_images_loaded": false,
   "torch_version": "2.15.0",
   "training_performed": false,
