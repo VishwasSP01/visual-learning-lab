@@ -28,6 +28,7 @@ COMMANDS = {
     "inspect_pixel_model": ("pixel_diagnostics", {"run_dir": Path, "output_dir": Path}),
     "analyze_spatial_errors": ("spatial_errors", SPATIAL_ANALYSIS),
     "compare_thresholds": ("threshold_comparison", SPATIAL_ANALYSIS),
+    "compare_instruction_thresholds": ("instruction_thresholds", SPATIAL_ANALYSIS),
     "evaluate_frozen_model": ("frozen_evaluation", {**SPATIAL_ANALYSIS, "config": Path}),
 }
 

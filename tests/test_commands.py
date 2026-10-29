@@ -18,6 +18,7 @@ class CommandChecks(unittest.TestCase):
             "demo",
             "generate_instruction_pairs",
             "train_instruction_model",
+            "compare_instruction_thresholds",
         )
         with tempfile.TemporaryDirectory() as working_directory:
             for name in commands:

@@ -24,6 +24,7 @@ non-finite numbers, invalid seeds, and nonpositive training settings.
 | `configs/shape_cnn_v1.json` | Train ShapeEditor | `data/shape_edits_v1` |
 | `configs/instruction_cnn_v1.json` | Train conditioned CNN and matched constant-ID control | `data/instruction_edits_v1`, with the declared manifest hash |
 | `configs/instruction_cnn_v2.json` | Same conditioning comparison with 24 epochs per model | Same instruction dataset and manifest hash |
+| `configs/instruction_cnn_v2_thresholds.json` | Select a shared cutoff by exact validation scene pairs | Saved v2 conditioned checkpoint, validation report, and instruction dataset |
 | `configs/pixel_diagnostics.json` | Saved PixelMLP probes | `results/pixel_mlp/model.pt` |
 | `configs/shape_cnn_v1_errors.json` | Frozen CNN validation error analysis | Original spatial checkpoint, validation report, and dataset |
 | `configs/shape_cnn_v1_thresholds.json` | Declared validation threshold grid | Original spatial checkpoint, validation report, and dataset |

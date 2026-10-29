@@ -35,7 +35,7 @@ class ConfigurationChecks(unittest.TestCase):
 
     def test_all_checked_in_configs_validate(self):
         paths = list((ROOT / "configs").glob("*.json"))
-        self.assertEqual(len(paths), 9)
+        self.assertEqual(len(paths), 10)
         for path in paths:
             with self.subTest(config=path.name):
                 _, parameters, context = load_configuration(path)
